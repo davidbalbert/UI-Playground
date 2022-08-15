@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+@_exported import HotSwiftUI
 
 @main
-struct UI_PlaygroundApp: App {
+struct UIPlaygroundApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
