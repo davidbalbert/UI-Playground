@@ -7,9 +7,52 @@
 
 import SwiftUI
 
+struct TransitionIsActiveKey: EnvironmentKey {
+    static var defaultValue = false
+}
+
+extension EnvironmentValues {
+    var transitionIsActive: Bool {
+        get { self[TransitionIsActiveKey.self] }
+        set { self[TransitionIsActiveKey.self] = newValue }
+    }
+}
+
+struct TransitionActive: ViewModifier {
+    var active: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .environment(\.transitionIsActive, active)
+    }
+}
+
+struct TransitionReader<Content: View>: View {
+    var content: (Bool) -> Content
+    @Environment(\.transitionIsActive) var active
+
+    var body: some View {
+        content(active)
+    }
+}
+
+//struct HasTransition: ViewModifier {
+//    func body(content: Content) -> some View {
+//        content
+//
+//    }
+//}
+//
+//extension View {
+//
+//}
+
 struct PhotoGrid: View {
     @State var slowAnimation = false
     @State var selection: Int?
+
+    @Namespace var ns
+    @Namespace var dummyNS
 
     var animation: Animation {
         if slowAnimation {
@@ -27,6 +70,7 @@ struct PhotoGrid: View {
                         ForEach(1..<11) { i in
                             Image("beach_\(i)")
                                 .resizable()
+                                .matchedGeometryEffect(id: i, in: ns)
                                 .aspectRatio(contentMode: .fill)
                                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                                 .aspectRatio(1, contentMode: .fit)
@@ -45,12 +89,23 @@ struct PhotoGrid: View {
             .opacity(selection == nil ? 1 : 0)
 
             if let s = selection {
-                Image("beach_\(s)")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .onTapGesture {
-                        selection = nil
+                VStack {
+                    TransitionReader { active in
+                        Image("beach_\(s)")
+                            .resizable()
+                            .mask {
+                                Rectangle()
+                                    .aspectRatio(1, contentMode: active ? .fit : .fill)
+                            }
+                            .matchedGeometryEffect(id: s, in: active ? ns : dummyNS, isSource: false)
+                            .aspectRatio(contentMode: .fit)
+                            .onTapGesture {
+                                selection = nil
+                            }
                     }
+                }
+                .zIndex(2)
+                .transition(.modifier(active: TransitionActive(active: true), identity: TransitionActive(active: false)))
             }
         }
         .background(.white)
