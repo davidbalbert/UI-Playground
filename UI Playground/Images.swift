@@ -26,7 +26,9 @@ struct Images: View {
                 .frame(width: 100, height: 100)
                 .border(.red)
 
-        }.eraseToAnyView()
+        }
+        .navigationTitle("Images")
+        .eraseToAnyView()
     }
 
     #if DEBUG

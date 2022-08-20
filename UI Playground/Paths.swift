@@ -17,6 +17,7 @@ struct Paths: View {
                 CGPoint(x: 50, y: 0),
             ])
         }
+        .navigationTitle("Paths")
         .eraseToAnyView()
     }
 

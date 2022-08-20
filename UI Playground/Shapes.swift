@@ -63,6 +63,7 @@ struct Shapes: View {
             }
             .frame(width: 400)
         }
+        .navigationTitle("Shapes")
         .eraseToAnyView()
     }
 

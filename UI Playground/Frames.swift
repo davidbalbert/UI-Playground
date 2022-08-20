@@ -11,8 +11,9 @@ struct Frames: View {
     var body: some View {
         MeasureBehavior {
             Text("Hello, world!")
-                .eraseToAnyView()
         }
+        .navigationTitle("Frames")
+        .eraseToAnyView()
     }
 
     #if DEBUG
