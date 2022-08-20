@@ -9,7 +9,7 @@ import SwiftUI
 
 extension View {
     func debug() -> some View {
-        print(self)
+        dump(self)
         return self
     }
 }

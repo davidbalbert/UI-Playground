@@ -28,7 +28,7 @@ struct TransitionIsActive: ViewModifier {
 }
 
 struct TransitionReader<Content: View>: View {
-    var content: (Bool) -> Content
+    @ViewBuilder var content: (Bool) -> Content
     @Environment(\.transitionIsActive) var active
 
     var body: some View {
