@@ -22,6 +22,7 @@
 		63C7F2D928AAF5D200D7BE64 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2D828AAF5D200D7BE64 /* Shapes.swift */; };
 		63C7F2DB28AAFAC600D7BE64 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2DA28AAFAC600D7BE64 /* Images.swift */; };
 		63C7F2DD28AAFC1800D7BE64 /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2DC28AAFC1800D7BE64 /* Debug.swift */; };
+		63EF793E28B0F84100E0EF1F /* PhotoGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		63C7F2D828AAF5D200D7BE64 /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
 		63C7F2DA28AAFAC600D7BE64 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
 		63C7F2DC28AAFC1800D7BE64 /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
+		63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGrid.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +117,7 @@
 				63C7F2DA28AAFAC600D7BE64 /* Images.swift */,
 				63C7F2DC28AAFC1800D7BE64 /* Debug.swift */,
 				63C7F2A328AAE1CD00D7BE64 /* ContentView.swift */,
+				63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */,
 				63C7F2D828AAF5D200D7BE64 /* Shapes.swift */,
 				63C7F2D628AAF3E100D7BE64 /* Paths.swift */,
 				63C7F2D428AAF08200D7BE64 /* Frames.swift */,
@@ -294,6 +297,7 @@
 				63C7F2D728AAF3E100D7BE64 /* Paths.swift in Sources */,
 				63C7F2A428AAE1CD00D7BE64 /* ContentView.swift in Sources */,
 				63C7F2A228AAE1CD00D7BE64 /* UIPlaygroundApp.swift in Sources */,
+				63EF793E28B0F84100E0EF1F /* PhotoGrid.swift in Sources */,
 				63C7F2DD28AAFC1800D7BE64 /* Debug.swift in Sources */,
 				63C7F2D328AAEEB200D7BE64 /* MeasureBehavior.swift in Sources */,
 				63C7F2D928AAF5D200D7BE64 /* Shapes.swift in Sources */,

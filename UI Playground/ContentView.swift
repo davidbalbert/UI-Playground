@@ -17,6 +17,10 @@ struct ContentView: View {
                     NavigationLink(destination: Shapes()) { Text("Shapes") }
                     NavigationLink(destination: Images()) { Text("Images") }
                 }
+
+                Section("Experiments") {
+                    NavigationLink(destination: PhotoGrid()) { Text("Photo Grid") }
+                }
             }
             .listStyle(.sidebar)
             .listItemTint(.monochrome)
