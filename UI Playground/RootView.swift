@@ -12,18 +12,18 @@ struct RootView: View {
         NavigationView {
             List {
                 Section("Layout") {
-                    NavigationLink(destination: Frames()) { Text("Frames") }
-                    NavigationLink(destination: Paths()) { Text("Paths") }
-                    NavigationLink(destination: Shapes()) { Text("Shapes") }
-                    NavigationLink(destination: Images()) { Text("Images") }
-                    NavigationLink(destination: Texts()) { Text("Text") }
-                    NavigationLink(destination: FlexibleFrames()) { Text("Flexible Frames") }
-                    NavigationLink(destination: MatchedGeometry()) { Text("Matched Geometry Effect") }
+                    NavigationLink("Frames", destination: Frames())
+                    NavigationLink("Paths", destination: Paths())
+                    NavigationLink("Shapes", destination: Shapes())
+                    NavigationLink("Images", destination: Images())
+                    NavigationLink("Text", destination: Texts())
+                    NavigationLink("Flexible Frames", destination: FlexibleFrames())
+                    NavigationLink("Matched Geometry Effect", destination: MatchedGeometry())
                 }
 
                 Section("Experiments") {
-                    NavigationLink(destination: CircularButtons()) { Text("Circular Buttons") }
-                    NavigationLink(destination: PhotoGrid()) { Text("Photo Grid") }
+                    NavigationLink("Circular Buttons", destination: CircularButtons())
+                    NavigationLink("Photo Grid", destination: PhotoGrid())
                 }
             }
             .listStyle(.sidebar)
