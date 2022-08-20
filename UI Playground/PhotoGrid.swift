@@ -18,7 +18,7 @@ extension EnvironmentValues {
     }
 }
 
-struct TransitionActive: ViewModifier {
+struct TransitionIsActive: ViewModifier {
     var active: Bool
 
     func body(content: Content) -> some View {
@@ -36,16 +36,9 @@ struct TransitionReader<Content: View>: View {
     }
 }
 
-//struct HasTransition: ViewModifier {
-//    func body(content: Content) -> some View {
-//        content
-//
-//    }
-//}
-//
-//extension View {
-//
-//}
+extension AnyTransition {
+    static var readable: AnyTransition = .modifier(active: TransitionIsActive(active: true), identity: TransitionIsActive(active: false))
+}
 
 struct PhotoGrid: View {
     @State var slowAnimation = false
@@ -75,6 +68,7 @@ struct PhotoGrid: View {
                                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                                 .aspectRatio(1, contentMode: .fit)
                                 .clipped()
+                                .contentShape(Rectangle())
                                 .onTapGesture {
                                     selection = i
                                 }
@@ -105,7 +99,8 @@ struct PhotoGrid: View {
                     }
                 }
                 .zIndex(2)
-                .transition(.modifier(active: TransitionActive(active: true), identity: TransitionActive(active: false)))
+                .id(s)
+                .transition(.readable)
             }
         }
         .background(.white)
