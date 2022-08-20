@@ -91,6 +91,7 @@ struct PhotoGrid: View {
                                 Rectangle()
                                     .aspectRatio(1, contentMode: active ? .fit : .fill)
                             }
+                            .clipShape(Rectangle())
                             .matchedGeometryEffect(id: s, in: active ? ns : dummyNS, isSource: false)
                             .aspectRatio(contentMode: .fit)
                             .onTapGesture {
