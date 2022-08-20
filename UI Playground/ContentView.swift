@@ -16,6 +16,8 @@ struct ContentView: View {
                     NavigationLink(destination: Paths()) { Text("Paths") }
                     NavigationLink(destination: Shapes()) { Text("Shapes") }
                     NavigationLink(destination: Images()) { Text("Images") }
+                    NavigationLink(destination: Texts()) { Text("Text") }
+                    NavigationLink(destination: FlexibleFrames()) { Text("Flexible Frames")}
                 }
 
                 Section("Experiments") {
