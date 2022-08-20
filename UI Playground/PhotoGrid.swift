@@ -100,6 +100,7 @@ struct PhotoGrid: View {
                 }
                 .zIndex(2)
                 .id(s)
+                // TODO: calling .transition seems to break HotSwiftUI. If we switch to Inject, will that fix it?
                 .transition(.readable)
             }
         }
