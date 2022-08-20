@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SplitView: View {
+struct RootView: View {
     var body: some View {
         NavigationView {
             List {
@@ -17,7 +17,8 @@ struct SplitView: View {
                     NavigationLink(destination: Shapes()) { Text("Shapes") }
                     NavigationLink(destination: Images()) { Text("Images") }
                     NavigationLink(destination: Texts()) { Text("Text") }
-                    NavigationLink(destination: FlexibleFrames()) { Text("Flexible Frames")}
+                    NavigationLink(destination: FlexibleFrames()) { Text("Flexible Frames") }
+                    NavigationLink(destination: MatchedGeometry()) { Text("Matched Geometry Effect") }
                 }
 
                 Section("Experiments") {
@@ -42,6 +43,6 @@ struct SplitView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        SplitView()
+        RootView()
     }
 }

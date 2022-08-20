@@ -12,7 +12,7 @@ import SwiftUI
 struct UIPlaygroundApp: App {
     var body: some Scene {
         WindowGroup {
-            SplitView()
+            RootView()
         }
     }
 }

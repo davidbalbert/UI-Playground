@@ -25,7 +25,6 @@ struct CircularButtons: View {
             Button("A") { print("baz") }
         }
         .buttonStyle(CircularButtonStyle())
-//        .debug()
         .eraseToAnyView()
     }
 
