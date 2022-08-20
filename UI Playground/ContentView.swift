@@ -8,15 +8,29 @@
 import SwiftUI
 
 struct ContentView: View {
+    var body: some View {
+        NavigationView {
+            List {
+                Section("Layout") {
+                    NavigationLink(destination: Frames()) { Text("Frames") }
+                    NavigationLink(destination: Paths()) { Text("Paths") }
+                    NavigationLink(destination: Shapes()) { Text("Shapes") }
+                    NavigationLink(destination: Images()) { Text("Images") }
+                }
+            }
+            .listStyle(.sidebar)
+            .listItemTint(.monochrome)
+
+        }
+        .toolbar {
+            Text(" ")
+        }
+        .eraseToAnyView()
+    }
+
     #if DEBUG
     @ObservedObject var iO = injectionObserver
     #endif
-
-    var body: some View {
-        Text("Hello, world!")
-            .padding()
-            .eraseToAnyView()
-    }
 }
 
 struct ContentView_Previews: PreviewProvider {

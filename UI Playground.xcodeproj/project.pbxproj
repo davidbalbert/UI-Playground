@@ -16,6 +16,12 @@
 		63C7F2C028AAE1CE00D7BE64 /* UI_PlaygroundUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2BF28AAE1CE00D7BE64 /* UI_PlaygroundUITestsLaunchTests.swift */; };
 		63C7F2CE28AAE2F300D7BE64 /* HotReloading in Frameworks */ = {isa = PBXBuildFile; productRef = 63C7F2CD28AAE2F300D7BE64 /* HotReloading */; };
 		63C7F2D128AAE83A00D7BE64 /* HotSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 63C7F2D028AAE83A00D7BE64 /* HotSwiftUI */; };
+		63C7F2D328AAEEB200D7BE64 /* MeasureBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2D228AAEEB200D7BE64 /* MeasureBehavior.swift */; };
+		63C7F2D528AAF08200D7BE64 /* Frames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2D428AAF08200D7BE64 /* Frames.swift */; };
+		63C7F2D728AAF3E100D7BE64 /* Paths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2D628AAF3E100D7BE64 /* Paths.swift */; };
+		63C7F2D928AAF5D200D7BE64 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2D828AAF5D200D7BE64 /* Shapes.swift */; };
+		63C7F2DB28AAFAC600D7BE64 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2DA28AAFAC600D7BE64 /* Images.swift */; };
+		63C7F2DD28AAFC1800D7BE64 /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2DC28AAFC1800D7BE64 /* Debug.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +53,12 @@
 		63C7F2B928AAE1CE00D7BE64 /* UI PlaygroundUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "UI PlaygroundUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63C7F2BD28AAE1CE00D7BE64 /* UI_PlaygroundUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI_PlaygroundUITests.swift; sourceTree = "<group>"; };
 		63C7F2BF28AAE1CE00D7BE64 /* UI_PlaygroundUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI_PlaygroundUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		63C7F2D228AAEEB200D7BE64 /* MeasureBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureBehavior.swift; sourceTree = "<group>"; };
+		63C7F2D428AAF08200D7BE64 /* Frames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frames.swift; sourceTree = "<group>"; };
+		63C7F2D628AAF3E100D7BE64 /* Paths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paths.swift; sourceTree = "<group>"; };
+		63C7F2D828AAF5D200D7BE64 /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
+		63C7F2DA28AAFAC600D7BE64 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
+		63C7F2DC28AAFC1800D7BE64 /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,7 +112,13 @@
 			isa = PBXGroup;
 			children = (
 				63C7F2A128AAE1CD00D7BE64 /* UIPlaygroundApp.swift */,
+				63C7F2DA28AAFAC600D7BE64 /* Images.swift */,
+				63C7F2DC28AAFC1800D7BE64 /* Debug.swift */,
 				63C7F2A328AAE1CD00D7BE64 /* ContentView.swift */,
+				63C7F2D828AAF5D200D7BE64 /* Shapes.swift */,
+				63C7F2D628AAF3E100D7BE64 /* Paths.swift */,
+				63C7F2D428AAF08200D7BE64 /* Frames.swift */,
+				63C7F2D228AAEEB200D7BE64 /* MeasureBehavior.swift */,
 				63C7F2A528AAE1CE00D7BE64 /* Assets.xcassets */,
 				63C7F2AA28AAE1CE00D7BE64 /* UI_Playground.entitlements */,
 				63C7F2A728AAE1CE00D7BE64 /* Preview Content */,
@@ -271,8 +289,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63C7F2DB28AAFAC600D7BE64 /* Images.swift in Sources */,
+				63C7F2D528AAF08200D7BE64 /* Frames.swift in Sources */,
+				63C7F2D728AAF3E100D7BE64 /* Paths.swift in Sources */,
 				63C7F2A428AAE1CD00D7BE64 /* ContentView.swift in Sources */,
 				63C7F2A228AAE1CD00D7BE64 /* UIPlaygroundApp.swift in Sources */,
+				63C7F2DD28AAFC1800D7BE64 /* Debug.swift in Sources */,
+				63C7F2D328AAEEB200D7BE64 /* MeasureBehavior.swift in Sources */,
+				63C7F2D928AAF5D200D7BE64 /* Shapes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
