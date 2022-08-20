@@ -20,7 +20,7 @@ struct MatchedGeometry: View {
             Circle()
                 .fill(.gray)
                 .matchedGeometryEffect(id: "ID", in: ns, isSource: false)
-                .border(Color.green)
+                .border(Color.green, width: 2)
         }
         .frame(width: 300, height: 100)
         .border(Color.black)
