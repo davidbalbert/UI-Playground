@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct SplitView: View {
     var body: some View {
         NavigationView {
             List {
@@ -21,6 +21,7 @@ struct ContentView: View {
                 }
 
                 Section("Experiments") {
+                    NavigationLink(destination: CircularButtons()) { Text("Circular Buttons") }
                     NavigationLink(destination: PhotoGrid()) { Text("Photo Grid") }
                 }
             }
@@ -41,6 +42,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        SplitView()
     }
 }
