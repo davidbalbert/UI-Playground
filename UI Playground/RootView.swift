@@ -21,6 +21,7 @@ struct RootView: View {
                     NavigationLink("Matched Geometry Effect", destination: MatchedGeometry())
                     NavigationLink("Clipping and Masking", destination: ClippingAndMasking())
                     NavigationLink("Stack Views", destination: StackViews())
+                    NavigationLink("Alignment", destination: AlignmentGuides())
                 }
 
                 Section("Experiments") {
