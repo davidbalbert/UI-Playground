@@ -27,6 +27,7 @@
 		63EF798428B13B1D00E0EF1F /* FlexibleFrames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798328B13B1D00E0EF1F /* FlexibleFrames.swift */; };
 		63EF798628B1458F00E0EF1F /* CircularButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798528B1458F00E0EF1F /* CircularButtons.swift */; };
 		63EF798828B14E8F00E0EF1F /* MatchedGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798728B14E8F00E0EF1F /* MatchedGeometry.swift */; };
+		63EF798A28B1520700E0EF1F /* ClippingAndMasking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798928B1520700E0EF1F /* ClippingAndMasking.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		63EF798328B13B1D00E0EF1F /* FlexibleFrames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexibleFrames.swift; sourceTree = "<group>"; };
 		63EF798528B1458F00E0EF1F /* CircularButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularButtons.swift; sourceTree = "<group>"; };
 		63EF798728B14E8F00E0EF1F /* MatchedGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchedGeometry.swift; sourceTree = "<group>"; };
+		63EF798928B1520700E0EF1F /* ClippingAndMasking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClippingAndMasking.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +127,7 @@
 				63C7F2DA28AAFAC600D7BE64 /* Images.swift */,
 				63C7F2DC28AAFC1800D7BE64 /* Debug.swift */,
 				63C7F2A328AAE1CD00D7BE64 /* RootView.swift */,
+				63EF798928B1520700E0EF1F /* ClippingAndMasking.swift */,
 				63EF798528B1458F00E0EF1F /* CircularButtons.swift */,
 				63EF798728B14E8F00E0EF1F /* MatchedGeometry.swift */,
 				63EF798328B13B1D00E0EF1F /* FlexibleFrames.swift */,
@@ -312,6 +315,7 @@
 				63C7F2A428AAE1CD00D7BE64 /* RootView.swift in Sources */,
 				63EF798828B14E8F00E0EF1F /* MatchedGeometry.swift in Sources */,
 				63C7F2A228AAE1CD00D7BE64 /* UIPlaygroundApp.swift in Sources */,
+				63EF798A28B1520700E0EF1F /* ClippingAndMasking.swift in Sources */,
 				63EF793E28B0F84100E0EF1F /* PhotoGrid.swift in Sources */,
 				63C7F2DD28AAFC1800D7BE64 /* Debug.swift in Sources */,
 				63C7F2D328AAEEB200D7BE64 /* MeasureBehavior.swift in Sources */,
