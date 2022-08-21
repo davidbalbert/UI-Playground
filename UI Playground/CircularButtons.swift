@@ -19,10 +19,12 @@ struct CircularButtonStyle: ButtonStyle {
     @State var textSize: CGSize?
     @Environment(\.circularButtonColor) var color
 
+    var radius: CGFloat?
+
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             if let size = textSize {
-                let r = max(size.width, size.height)
+                let r = radius ?? max(size.width, size.height)
 
                 Circle()
                     .fill(color)
@@ -46,6 +48,9 @@ struct CircularButtonStyle: ButtonStyle {
 
 extension ButtonStyle where Self == CircularButtonStyle {
     static var circular: CircularButtonStyle { CircularButtonStyle() }
+    static func circular(radius: CGFloat) -> CircularButtonStyle {
+        CircularButtonStyle(radius: radius)
+    }
 }
 
 struct CircularButtonColor: EnvironmentKey {
@@ -71,12 +76,23 @@ struct CircularButtons: View {
     var body: some View {
         VStack {
             Group {
-                Button("A very long title") { print("foo") }
-                Button("A\nvery\ntall\ntitle") { print("tall") }
-                Button("Short") { print("bar") }
-                Button("A") { print("baz") }
+                HStack {
+                    Button("A very long title") { print("foo") }
+                    Button("A\nvery\ntall\ntitle") { print("tall") }
+                    Button("Short") { print("bar") }
+                    Button("A") { print("baz") }
+                }
+                .buttonStyle(.circular)
+
+                HStack {
+                    Button("A") { print("a") }
+                    Button("AA") { print("aa") }
+                    Button("AAAA") { print("aaa") }
+                    Button("AAAAA") { print("aaaa") }
+                    Button("AAAAAA") { print("aaaaa") }
+                }
+                .buttonStyle(.circular(radius: 80))
             }
-            .buttonStyle(.circular)
             .circularButtonColor(color)
             .foregroundColor(.white)
 

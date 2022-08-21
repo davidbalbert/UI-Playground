@@ -9,6 +9,7 @@ import SwiftUI
 
 struct Measured: ViewModifier {
     var shouldMeasure: Bool
+    var alignment: Alignment
     @State var hovering: Bool = false
 
     @ViewBuilder
@@ -26,6 +27,7 @@ struct Measured: ViewModifier {
                         .onHover { action in
                             hovering = action
                         }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
                 }
             }
         } else {
@@ -35,7 +37,7 @@ struct Measured: ViewModifier {
 }
 
 extension View {
-    func measured(_ shouldMeasure: Bool = true) -> some View {
-        modifier(Measured(shouldMeasure: shouldMeasure))
+    func measured(_ shouldMeasure: Bool = true, alignment: Alignment = .topLeading) -> some View {
+        modifier(Measured(shouldMeasure: shouldMeasure, alignment: alignment))
     }
 }

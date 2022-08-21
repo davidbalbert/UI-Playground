@@ -12,16 +12,22 @@ struct RootView: View {
         NavigationView {
             List {
                 Section("Layout") {
-                    NavigationLink("Frames", destination: Frames())
-                    NavigationLink("Paths", destination: Paths())
-                    NavigationLink("Shapes", destination: Shapes())
-                    NavigationLink("Images", destination: Images())
-                    NavigationLink("Text", destination: Texts())
-                    NavigationLink("Flexible Frames", destination: FlexibleFrames())
-                    NavigationLink("Matched Geometry Effect", destination: MatchedGeometry())
-                    NavigationLink("Clipping and Masking", destination: ClippingAndMasking())
-                    NavigationLink("Stack Views", destination: StackViews())
-                    NavigationLink("Alignment", destination: AlignmentGuides())
+                    Group {
+                        NavigationLink("Frames", destination: Frames())
+                        NavigationLink("Paths", destination: Paths())
+                        NavigationLink("Shapes", destination: Shapes())
+                        NavigationLink("Images", destination: Images())
+                        NavigationLink("Text", destination: Texts())
+                        NavigationLink("Flexible Frames", destination: FlexibleFrames())
+                        NavigationLink("Matched Geometry Effect", destination: MatchedGeometry())
+                        NavigationLink("Clipping and Masking", destination: ClippingAndMasking())
+                        NavigationLink("Stack Views", destination: StackViews())
+                        NavigationLink("Alignment", destination: AlignmentGuides())
+                    }
+
+                    Group {
+                        NavigationLink("Grid Views", destination: GridViews())
+                    }
                 }
 
                 Section("Experiments") {
