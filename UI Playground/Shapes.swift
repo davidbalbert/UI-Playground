@@ -23,8 +23,7 @@ struct Triangle: Shape {
 struct Shapes: View {
     @State var rotation: CGFloat = 45
 
-    @State var offsetWidth: CGFloat = 20
-    @State var offsetHeight: CGFloat = 20
+    @State var offset: CGSize = CGSize(width: 20, height: 20)
 
     var body: some View {
         VStack {
@@ -44,24 +43,26 @@ struct Shapes: View {
                 }
             }
             .frame(width: 400)
+            .padding()
 
             Rectangle()
-                .offset(x: offsetWidth, y: offsetHeight)
+                .offset(offset)
                 .fill(.green)
                 .border(.blue)
                 .frame(width: 100, height: 100)
                 .padding(30)
 
             Form {
-                Slider(value: $offsetWidth, in: 0...100) {
+                Slider(value: $offset.width, in: 0...100) {
                     Text("Offset width")
                 }
 
-                Slider(value: $offsetHeight, in: 0...100) {
+                Slider(value: $offset.height, in: 0...100) {
                     Text("Offset height")
                 }
             }
             .frame(width: 400)
+            .padding()
         }
         .navigationTitle("Shapes")
         .eraseToAnyView()
