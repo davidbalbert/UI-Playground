@@ -8,37 +8,52 @@
 import SwiftUI
 
 struct MeasureBehavior<Content: View>: View {
-    @State var width: CGFloat = 100
-    @State var height: CGFloat = 100
+    @State var width: CGFloat
+    @State var height: CGFloat
 
     var content: Content
 
-    init(content: () -> Content) {
+    init(initialWidth: CGFloat? = nil, initialHeight: CGFloat? = nil, content: () -> Content) {
         self.content = content()
+
+        _width = State(initialValue: initialWidth ?? 100)
+        _height = State(initialValue: initialHeight ?? 100)
     }
 
     var body: some View {
         VStack {
-            content
-                .border(.gray)
-                .frame(width: width, height: height)
-                .border(.black)
-                .padding(.top, 40)
+            VStack {
+                content
+                    .border(.gray)
+                    .frame(width: width, height: height)
+                    .border(.black)
 
-            Spacer()
+                Spacer()
+            }
+            .frame(height: 210)
 
             Form {
-                Slider(value: $width, in: 0...500) {
-                    Text("Width")
+                HStack {
+                    Slider(value: $width, in: 0...500) {
+                        Text("Width")
+                    }
+
+                    Text("\(Int(width)) pt")
+                        .frame(width: 42, alignment: .trailing)
                 }
 
-                Slider(value: $height, in: 0...200) {
-                    Text("Height")
+                HStack {
+                    Slider(value: $height, in: 0...200) {
+                        Text("Height")
+                    }
+                    Text("\(Int(height)) pt")
+                        .frame(width: 42, alignment: .trailing)
+
                 }
             }
             .padding()
             .frame(maxWidth: 400)
-            .padding(.bottom, 40)
+            .monospacedDigit()
         }
         .eraseToAnyView()
     }

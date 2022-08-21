@@ -12,6 +12,7 @@ struct Frames: View {
         MeasureBehavior {
             Text("Hello, world!")
         }
+        .padding(40)
         .navigationTitle("Frames")
         .eraseToAnyView()
     }

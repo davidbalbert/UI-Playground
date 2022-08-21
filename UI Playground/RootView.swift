@@ -20,6 +20,7 @@ struct RootView: View {
                     NavigationLink("Flexible Frames", destination: FlexibleFrames())
                     NavigationLink("Matched Geometry Effect", destination: MatchedGeometry())
                     NavigationLink("Clipping and Masking", destination: ClippingAndMasking())
+                    NavigationLink("Stack Views", destination: StackViews())
                 }
 
                 Section("Experiments") {

@@ -28,6 +28,8 @@
 		63EF798628B1458F00E0EF1F /* CircularButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798528B1458F00E0EF1F /* CircularButtons.swift */; };
 		63EF798828B14E8F00E0EF1F /* MatchedGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798728B14E8F00E0EF1F /* MatchedGeometry.swift */; };
 		63EF798A28B1520700E0EF1F /* ClippingAndMasking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798928B1520700E0EF1F /* ClippingAndMasking.swift */; };
+		63EF798C28B27BED00E0EF1F /* StackViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798B28B27BED00E0EF1F /* StackViews.swift */; };
+		63EF798E28B2B9F300E0EF1F /* Measured.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798D28B2B9F300E0EF1F /* Measured.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +73,8 @@
 		63EF798528B1458F00E0EF1F /* CircularButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularButtons.swift; sourceTree = "<group>"; };
 		63EF798728B14E8F00E0EF1F /* MatchedGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchedGeometry.swift; sourceTree = "<group>"; };
 		63EF798928B1520700E0EF1F /* ClippingAndMasking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClippingAndMasking.swift; sourceTree = "<group>"; };
+		63EF798B28B27BED00E0EF1F /* StackViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViews.swift; sourceTree = "<group>"; };
+		63EF798D28B2B9F300E0EF1F /* Measured.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Measured.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,22 +127,24 @@
 		63C7F2A028AAE1CD00D7BE64 /* UI Playground */ = {
 			isa = PBXGroup;
 			children = (
-				63C7F2A128AAE1CD00D7BE64 /* UIPlaygroundApp.swift */,
-				63C7F2DA28AAFAC600D7BE64 /* Images.swift */,
-				63C7F2DC28AAFC1800D7BE64 /* Debug.swift */,
-				63C7F2A328AAE1CD00D7BE64 /* RootView.swift */,
-				63EF798928B1520700E0EF1F /* ClippingAndMasking.swift */,
-				63EF798528B1458F00E0EF1F /* CircularButtons.swift */,
-				63EF798728B14E8F00E0EF1F /* MatchedGeometry.swift */,
-				63EF798328B13B1D00E0EF1F /* FlexibleFrames.swift */,
-				63EF798128B1389C00E0EF1F /* Texts.swift */,
-				63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */,
-				63C7F2D828AAF5D200D7BE64 /* Shapes.swift */,
-				63C7F2D628AAF3E100D7BE64 /* Paths.swift */,
-				63C7F2D428AAF08200D7BE64 /* Frames.swift */,
-				63C7F2D228AAEEB200D7BE64 /* MeasureBehavior.swift */,
-				63C7F2A528AAE1CE00D7BE64 /* Assets.xcassets */,
 				63C7F2AA28AAE1CE00D7BE64 /* UI_Playground.entitlements */,
+				63EF798528B1458F00E0EF1F /* CircularButtons.swift */,
+				63EF798928B1520700E0EF1F /* ClippingAndMasking.swift */,
+				63C7F2DC28AAFC1800D7BE64 /* Debug.swift */,
+				63EF798328B13B1D00E0EF1F /* FlexibleFrames.swift */,
+				63C7F2D428AAF08200D7BE64 /* Frames.swift */,
+				63C7F2DA28AAFAC600D7BE64 /* Images.swift */,
+				63EF798728B14E8F00E0EF1F /* MatchedGeometry.swift */,
+				63C7F2D228AAEEB200D7BE64 /* MeasureBehavior.swift */,
+				63EF798D28B2B9F300E0EF1F /* Measured.swift */,
+				63C7F2D628AAF3E100D7BE64 /* Paths.swift */,
+				63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */,
+				63C7F2A328AAE1CD00D7BE64 /* RootView.swift */,
+				63C7F2D828AAF5D200D7BE64 /* Shapes.swift */,
+				63EF798B28B27BED00E0EF1F /* StackViews.swift */,
+				63EF798128B1389C00E0EF1F /* Texts.swift */,
+				63C7F2A128AAE1CD00D7BE64 /* UIPlaygroundApp.swift */,
+				63C7F2A528AAE1CE00D7BE64 /* Assets.xcassets */,
 				63C7F2A728AAE1CE00D7BE64 /* Preview Content */,
 			);
 			path = "UI Playground";
@@ -308,6 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				63C7F2DB28AAFAC600D7BE64 /* Images.swift in Sources */,
+				63EF798C28B27BED00E0EF1F /* StackViews.swift in Sources */,
 				63EF798428B13B1D00E0EF1F /* FlexibleFrames.swift in Sources */,
 				63C7F2D528AAF08200D7BE64 /* Frames.swift in Sources */,
 				63C7F2D728AAF3E100D7BE64 /* Paths.swift in Sources */,
@@ -321,6 +328,7 @@
 				63C7F2D328AAEEB200D7BE64 /* MeasureBehavior.swift in Sources */,
 				63EF798228B1389C00E0EF1F /* Texts.swift in Sources */,
 				63C7F2D928AAF5D200D7BE64 /* Shapes.swift in Sources */,
+				63EF798E28B2B9F300E0EF1F /* Measured.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
