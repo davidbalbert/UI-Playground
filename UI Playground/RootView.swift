@@ -37,6 +37,7 @@ struct RootView: View {
 
                 Section("20 Sketches") {
                     NavigationLink("Loading Indicator", destination: LoadingIndicator())
+                    NavigationLink("Fabric", destination: FabricEffect())
                 }
             }
             .listStyle(.sidebar)

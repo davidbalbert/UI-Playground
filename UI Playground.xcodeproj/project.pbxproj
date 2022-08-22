@@ -33,6 +33,7 @@
 		63EF799028B2BBDC00E0EF1F /* AlignmentGuides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798F28B2BBDC00E0EF1F /* AlignmentGuides.swift */; };
 		63EF799228B2CC5500E0EF1F /* GridViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF799128B2CC5500E0EF1F /* GridViews.swift */; };
 		63FC0BFF28B3D492004A9874 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FC0BFE28B3D492004A9874 /* LoadingIndicator.swift */; };
+		63FC0C0128B3F0A2004A9874 /* FabricEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FC0C0028B3F0A2004A9874 /* FabricEffect.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +82,7 @@
 		63EF798F28B2BBDC00E0EF1F /* AlignmentGuides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlignmentGuides.swift; sourceTree = "<group>"; };
 		63EF799128B2CC5500E0EF1F /* GridViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridViews.swift; sourceTree = "<group>"; };
 		63FC0BFE28B3D492004A9874 /* LoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
+		63FC0C0028B3F0A2004A9874 /* FabricEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FabricEffect.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +149,7 @@
 				63C7F2D628AAF3E100D7BE64 /* Paths.swift */,
 				63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */,
 				63C7F2A328AAE1CD00D7BE64 /* RootView.swift */,
+				63FC0C0028B3F0A2004A9874 /* FabricEffect.swift */,
 				63FC0BFE28B3D492004A9874 /* LoadingIndicator.swift */,
 				63EF799128B2CC5500E0EF1F /* GridViews.swift */,
 				63C7F2D828AAF5D200D7BE64 /* Shapes.swift */,
@@ -327,6 +330,7 @@
 				63EF799028B2BBDC00E0EF1F /* AlignmentGuides.swift in Sources */,
 				63EF798428B13B1D00E0EF1F /* FlexibleFrames.swift in Sources */,
 				63C7F2D528AAF08200D7BE64 /* Frames.swift in Sources */,
+				63FC0C0128B3F0A2004A9874 /* FabricEffect.swift in Sources */,
 				63C7F2D728AAF3E100D7BE64 /* Paths.swift in Sources */,
 				63EF798628B1458F00E0EF1F /* CircularButtons.swift in Sources */,
 				63C7F2A428AAE1CD00D7BE64 /* RootView.swift in Sources */,
