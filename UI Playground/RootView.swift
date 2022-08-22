@@ -34,6 +34,10 @@ struct RootView: View {
                     NavigationLink("Circular Buttons", destination: CircularButtons())
                     NavigationLink("Photo Grid", destination: PhotoGrid())
                 }
+
+                Section("20 Sketches") {
+                    NavigationLink("Loading Indicator", destination: LoadingIndicator())
+                }
             }
             .listStyle(.sidebar)
             .listItemTint(.monochrome)

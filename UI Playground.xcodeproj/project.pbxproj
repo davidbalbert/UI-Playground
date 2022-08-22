@@ -32,6 +32,7 @@
 		63EF798E28B2B9F300E0EF1F /* Measured.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798D28B2B9F300E0EF1F /* Measured.swift */; };
 		63EF799028B2BBDC00E0EF1F /* AlignmentGuides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798F28B2BBDC00E0EF1F /* AlignmentGuides.swift */; };
 		63EF799228B2CC5500E0EF1F /* GridViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF799128B2CC5500E0EF1F /* GridViews.swift */; };
+		63FC0BFF28B3D492004A9874 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FC0BFE28B3D492004A9874 /* LoadingIndicator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 		63EF798D28B2B9F300E0EF1F /* Measured.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Measured.swift; sourceTree = "<group>"; };
 		63EF798F28B2BBDC00E0EF1F /* AlignmentGuides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlignmentGuides.swift; sourceTree = "<group>"; };
 		63EF799128B2CC5500E0EF1F /* GridViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridViews.swift; sourceTree = "<group>"; };
+		63FC0BFE28B3D492004A9874 /* LoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +147,7 @@
 				63C7F2D628AAF3E100D7BE64 /* Paths.swift */,
 				63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */,
 				63C7F2A328AAE1CD00D7BE64 /* RootView.swift */,
+				63FC0BFE28B3D492004A9874 /* LoadingIndicator.swift */,
 				63EF799128B2CC5500E0EF1F /* GridViews.swift */,
 				63C7F2D828AAF5D200D7BE64 /* Shapes.swift */,
 				63EF798B28B27BED00E0EF1F /* StackViews.swift */,
@@ -336,6 +339,7 @@
 				63EF799228B2CC5500E0EF1F /* GridViews.swift in Sources */,
 				63EF798228B1389C00E0EF1F /* Texts.swift in Sources */,
 				63C7F2D928AAF5D200D7BE64 /* Shapes.swift in Sources */,
+				63FC0BFF28B3D492004A9874 /* LoadingIndicator.swift in Sources */,
 				63EF798E28B2B9F300E0EF1F /* Measured.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
