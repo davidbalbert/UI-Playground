@@ -39,6 +39,7 @@ struct RootView: View {
                     NavigationLink("Loading Indicator", destination: LoadingIndicator())
                     NavigationLink("Fabric", destination: FabricEffect())
                     NavigationLink("Clock", destination: Clocks())
+                    NavigationLink("Seven Segment Display", destination: SevenSegment())
                 }
             }
             .listStyle(.sidebar)

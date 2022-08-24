@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		635B5E8128B56B0000A7E3E3 /* SevenSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635B5E8028B56B0000A7E3E3 /* SevenSegment.swift */; };
+		635B5E8328B56E8A00A7E3E3 /* CG+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635B5E8228B56E8A00A7E3E3 /* CG+Extensions.swift */; };
 		63C7F2A228AAE1CD00D7BE64 /* UIPlaygroundApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2A128AAE1CD00D7BE64 /* UIPlaygroundApp.swift */; };
 		63C7F2A428AAE1CD00D7BE64 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2A328AAE1CD00D7BE64 /* RootView.swift */; };
 		63C7F2A628AAE1CE00D7BE64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63C7F2A528AAE1CE00D7BE64 /* Assets.xcassets */; };
@@ -55,6 +57,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		635B5E8028B56B0000A7E3E3 /* SevenSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SevenSegment.swift; sourceTree = "<group>"; };
+		635B5E8228B56E8A00A7E3E3 /* CG+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CG+Extensions.swift"; sourceTree = "<group>"; };
 		63C7F29E28AAE1CD00D7BE64 /* UI Playground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UI Playground.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63C7F2A128AAE1CD00D7BE64 /* UIPlaygroundApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIPlaygroundApp.swift; sourceTree = "<group>"; };
 		63C7F2A328AAE1CD00D7BE64 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -151,6 +155,8 @@
 				63C7F2D628AAF3E100D7BE64 /* Paths.swift */,
 				63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */,
 				63C7F2A328AAE1CD00D7BE64 /* RootView.swift */,
+				635B5E8028B56B0000A7E3E3 /* SevenSegment.swift */,
+				635B5E8228B56E8A00A7E3E3 /* CG+Extensions.swift */,
 				63FC0C0628B50D46004A9874 /* Clocks.swift */,
 				63FC0C0028B3F0A2004A9874 /* FabricEffect.swift */,
 				63FC0BFE28B3D492004A9874 /* LoadingIndicator.swift */,
@@ -331,6 +337,7 @@
 				63C7F2DB28AAFAC600D7BE64 /* Images.swift in Sources */,
 				63EF798C28B27BED00E0EF1F /* StackViews.swift in Sources */,
 				63EF799028B2BBDC00E0EF1F /* AlignmentGuides.swift in Sources */,
+				635B5E8128B56B0000A7E3E3 /* SevenSegment.swift in Sources */,
 				63FC0C0728B50D46004A9874 /* Clocks.swift in Sources */,
 				63EF798428B13B1D00E0EF1F /* FlexibleFrames.swift in Sources */,
 				63C7F2D528AAF08200D7BE64 /* Frames.swift in Sources */,
@@ -338,6 +345,7 @@
 				63C7F2D728AAF3E100D7BE64 /* Paths.swift in Sources */,
 				63EF798628B1458F00E0EF1F /* CircularButtons.swift in Sources */,
 				63C7F2A428AAE1CD00D7BE64 /* RootView.swift in Sources */,
+				635B5E8328B56E8A00A7E3E3 /* CG+Extensions.swift in Sources */,
 				63EF798828B14E8F00E0EF1F /* MatchedGeometry.swift in Sources */,
 				63C7F2A228AAE1CD00D7BE64 /* UIPlaygroundApp.swift in Sources */,
 				63EF798A28B1520700E0EF1F /* ClippingAndMasking.swift in Sources */,
