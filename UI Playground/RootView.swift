@@ -43,6 +43,7 @@ struct RootView: View {
                     NavigationLink("Card Punchout", destination: CardPunchout())
                     NavigationLink("Cover Flow", destination: CoverFlow())
                     NavigationLink("Pagination", destination: Pagination())
+                    NavigationLink("Gravity Slider", destination: GravitySlider())
                 }
             }
             .listStyle(.sidebar)

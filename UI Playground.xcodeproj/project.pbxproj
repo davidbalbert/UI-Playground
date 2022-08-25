@@ -28,6 +28,7 @@
 		63C92F8728B6A7FB00DF9617 /* CoverFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C92F8628B6A7FB00DF9617 /* CoverFlow.swift */; };
 		63C92F8928B6AEB500DF9617 /* Comparable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C92F8828B6AEB500DF9617 /* Comparable+Extensions.swift */; };
 		63C92F8B28B7C28500DF9617 /* Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C92F8A28B7C28500DF9617 /* Pagination.swift */; };
+		63C92F8D28B7D6B600DF9617 /* GravitySlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C92F8C28B7D6B600DF9617 /* GravitySlider.swift */; };
 		63EF793E28B0F84100E0EF1F /* PhotoGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */; };
 		63EF798228B1389C00E0EF1F /* Texts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798128B1389C00E0EF1F /* Texts.swift */; };
 		63EF798428B13B1D00E0EF1F /* FlexibleFrames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF798328B13B1D00E0EF1F /* FlexibleFrames.swift */; };
@@ -84,6 +85,7 @@
 		63C92F8628B6A7FB00DF9617 /* CoverFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverFlow.swift; sourceTree = "<group>"; };
 		63C92F8828B6AEB500DF9617 /* Comparable+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Comparable+Extensions.swift"; sourceTree = "<group>"; };
 		63C92F8A28B7C28500DF9617 /* Pagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pagination.swift; sourceTree = "<group>"; };
+		63C92F8C28B7D6B600DF9617 /* GravitySlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GravitySlider.swift; sourceTree = "<group>"; };
 		63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGrid.swift; sourceTree = "<group>"; };
 		63EF798128B1389C00E0EF1F /* Texts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Texts.swift; sourceTree = "<group>"; };
 		63EF798328B13B1D00E0EF1F /* FlexibleFrames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexibleFrames.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				63C7F2D628AAF3E100D7BE64 /* Paths.swift */,
 				63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */,
 				63C7F2A328AAE1CD00D7BE64 /* RootView.swift */,
+				63C92F8C28B7D6B600DF9617 /* GravitySlider.swift */,
 				635B5E8028B56B0000A7E3E3 /* SevenSegment.swift */,
 				63C7F2D828AAF5D200D7BE64 /* Shapes.swift */,
 				63EF798B28B27BED00E0EF1F /* StackViews.swift */,
@@ -361,6 +364,7 @@
 				635B5E8328B56E8A00A7E3E3 /* CG+Extensions.swift in Sources */,
 				63EF798828B14E8F00E0EF1F /* MatchedGeometry.swift in Sources */,
 				63C7F2A228AAE1CD00D7BE64 /* UIPlaygroundApp.swift in Sources */,
+				63C92F8D28B7D6B600DF9617 /* GravitySlider.swift in Sources */,
 				63C92F8B28B7C28500DF9617 /* Pagination.swift in Sources */,
 				63EF798A28B1520700E0EF1F /* ClippingAndMasking.swift in Sources */,
 				63EF793E28B0F84100E0EF1F /* PhotoGrid.swift in Sources */,
