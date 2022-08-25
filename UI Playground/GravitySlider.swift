@@ -113,30 +113,55 @@ struct TiltableSlider: View {
 struct GravitySlider: View {
     @State var value: Double = 50
     @State var angle: Angle = .zero
-    @State var dragAngle: Angle = .zero
+
+    @State var angleBeforeDrag: Angle? = nil
+
+    func radians(_ point: CGPoint) -> Double {
+        atan2(point.y, point.x)
+    }
+
+    func snappedToAxes(_ angle: Angle, tolerence: Double) -> Angle {
+        switch angle.degrees {
+        case (360-tolerence)...360:
+            return .degrees(0)
+        case 0...(0+tolerence):
+            return .degrees(0)
+        case (90-tolerence)...(90+tolerence):
+            return .degrees(90)
+        case (180-tolerence)...(180+tolerence):
+            return .degrees(180)
+        case (270-tolerence)...(270+tolerence):
+            return .degrees(270)
+        default:
+            return angle
+        }
+    }
 
     var body: some View {
         GeometryReader { proxy in
             TiltableSlider(value: $value, in: 0...100)
                 .frame(width: 300)
-                .rotationEffect(dragAngle + angle)
+                .rotationEffect(angle)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .contentShape(Rectangle())
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { value in
                             let frame = proxy.frame(in: .local)
-                            let startOffset = CGPoint(x: value.startLocation.x - frame.midX, y: value.startLocation.y - frame.midY)
-                            let startAngle = Angle.radians(atan2(startOffset.y, startOffset.x))
+                            let center = CGPoint(x: frame.midX, y: frame.midY)
 
-                            let currentOffset = CGPoint(x: value.location.x - frame.midX, y: value.location.y - frame.midY)
-                            let currentAngle = Angle.radians(atan2(currentOffset.y, currentOffset.x))
+                            angleBeforeDrag = angleBeforeDrag ?? angle
 
-                            dragAngle = currentAngle - startAngle
+                            let startRadians = angleBeforeDrag!.radians
+                            let offsetRadians = radians(value.location - center) - radians(value.startLocation - center)
+
+                            let tau = 2.0 * .pi
+                            let radians = (tau + startRadians + offsetRadians).truncatingRemainder(dividingBy: tau)
+                            angle = snappedToAxes(.radians(radians), tolerence: 15)
+                            print(angle.degrees)
                         }
                         .onEnded { value in
-                            angle += dragAngle
-                            dragAngle = .zero
+                            angleBeforeDrag = nil
                         }
                 )
         }
