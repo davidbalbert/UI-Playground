@@ -10,6 +10,8 @@ import SwiftUI
 // Slider seems to have trouble with orientations other than exactly vertical or exactly horizontal
 struct TiltableSlider: View {
     @Binding var value: Double
+    @State var dragging: Bool = false
+
     var bounds: ClosedRange<Double>
 
     init(value: Binding<Double>, in bounds: ClosedRange<Double>) {
@@ -23,11 +25,19 @@ struct TiltableSlider: View {
     }
 
     var shadowColor: Color {
-        Color(.displayP3, red: 0.81, green: 0.81, blue: 0.81, opacity: 1.0)
+        Color(red: 0.81, green: 0.81, blue: 0.81, opacity: 1.0)
     }
 
     var controlAccentColor: Color {
         Color(NSColor.controlAccentColor)
+    }
+
+    var knobColor: Color {
+        .white
+    }
+
+    var knobPressedColor: Color {
+        Color(white: 0.95)
     }
 
     var knobDiameter: Double {
@@ -71,7 +81,7 @@ struct TiltableSlider: View {
                     .offset(x: percent*proxy.size.width/2 - proxy.size.width/2)
 
                 Circle()
-                    .fill(.white)
+                    .fill(dragging ? knobPressedColor : knobColor)
                     .frame(width: knobDiameter)
                     .shadow(radius: 0.5, y: 0)
                     .background {
@@ -82,6 +92,18 @@ struct TiltableSlider: View {
                     .offset(x: knobOffset(for: proxy.size.width))
             }
             .frame(maxHeight: .infinity)
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        let percent = (value.location.x / proxy.size.width).clamped(to: 0...1.0)
+                        self.value = percent*(bounds.upperBound-bounds.lowerBound) + bounds.lowerBound
+                        dragging = true
+                    }
+                    .onEnded { value in
+                        dragging = false
+                    }
+            )
         }
         .frame(height: knobDiameter)
 
