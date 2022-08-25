@@ -112,13 +112,34 @@ struct TiltableSlider: View {
 
 struct GravitySlider: View {
     @State var value: Double = 50
+    @State var angle: Angle = .zero
+    @State var dragAngle: Angle = .zero
 
     var body: some View {
-        VStack {
-            Slider(value: $value, in: 0...100)
+        GeometryReader { proxy in
             TiltableSlider(value: $value, in: 0...100)
+                .frame(width: 300)
+                .rotationEffect(dragAngle + angle)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            let frame = proxy.frame(in: .local)
+                            let startOffset = CGPoint(x: value.startLocation.x - frame.midX, y: value.startLocation.y - frame.midY)
+                            let startAngle = Angle.radians(atan2(startOffset.y, startOffset.x))
+
+                            let currentOffset = CGPoint(x: value.location.x - frame.midX, y: value.location.y - frame.midY)
+                            let currentAngle = Angle.radians(atan2(currentOffset.y, currentOffset.x))
+
+                            dragAngle = currentAngle - startAngle
+                        }
+                        .onEnded { value in
+                            angle += dragAngle
+                            dragAngle = .zero
+                        }
+                )
         }
-        .frame(width: 300)
         .eraseToAnyView()
     }
 
