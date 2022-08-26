@@ -85,7 +85,7 @@ struct LineBetweenPaths: View, Animatable {
                 start: path1.trimmedPath(from: 0, to: progress).currentPoint ?? initialStart,
                 end: path2.trimmedPath(from: 0, to: progress).currentPoint ?? initialEnd
             )
-            .stroke(Color(NSColor.lightGray), lineWidth: 2)
+            .stroke(.red, lineWidth: 1)
         }
     }
 }
@@ -130,7 +130,7 @@ struct BezierCurveVisualizer: View {
         quadraticBezier(curve.cp1, curve.cp2, curve.p2)
     }
 
-    var quadColor: Color {
+    var lightBlue: Color {
         Color(NSColor.blue.highlight(withLevel: 0.5)!)
     }
 
@@ -142,28 +142,37 @@ struct BezierCurveVisualizer: View {
                         start: stopped ? curve.p1 : curve.cp1,
                         end: stopped ? curve.cp1 : curve.cp2
                     )
-                    .stroke(Color(NSColor.lightGray), lineWidth: 2)
+                    .stroke(lightBlue, lineWidth: 1)
 
                     Line(
                         start: stopped ? curve.cp1 : curve.cp2,
                         end: stopped ? curve.cp2 : curve.p2
                     )
-                    .stroke(Color(NSColor.lightGray), lineWidth: 2)
+                    .stroke(lightBlue, lineWidth: 1)
                 }
                 .opacity(step >= 2 ? 1 : 0)
 
                 Group {
+                    AnimatedPath(path: firstQuad, progress: stopped ? 0 : 1)
+                        .stroke(lightBlue, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    AnimatedPath(path: secondQuad, progress: stopped ? 0 : 1)
+                        .stroke(lightBlue, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                }
+                .opacity(step == 4 ? 1 : 0)
+
+                Group {
                     firstQuad
-                        .stroke(quadColor, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                        .stroke(lightBlue, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
 
                     secondQuad
-                        .stroke(quadColor, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                        .stroke(lightBlue, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
                 }
-                .opacity(step >= 4 ? 1 : 0)
+                .opacity(step >= 5 ? 1 : 0)
 
                 Group {
                     AnimatedPath(path: curve.path, progress: stopped ? 0 : 1)
-                        .stroke(.blue, lineWidth: 4)
+                        .stroke(.black, lineWidth: 3)
                 }
                 .opacity(step >= 7 ? 1 : 0)
 
@@ -171,7 +180,7 @@ struct BezierCurveVisualizer: View {
                     Path { p in
                         p.addLines([curve.p1, curve.cp1, curve.cp2, curve.p2])
                     }
-                    .stroke(Color(NSColor.lightGray), lineWidth: 2)
+                    .stroke(lightBlue, lineWidth: 1)
 
                     PointView(point: curve.p1, radius: 4)
                     PointView(point: curve.cp1, radius: 4)
