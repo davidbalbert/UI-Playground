@@ -127,27 +127,27 @@ struct Clock: View {
                     .fill(.white)
                     .overlay {
                         ForEach(metrics.ticks) { tick in
-                            Rectangle()
+                            SmoothRectangle()
                                 .fill(.black)
                                 .frame(tick.size)
                                 .offset(y: tick.offset)
                                 .rotationEffect(tick.angle)
                         }
 
-                        Rectangle()
+                        SmoothRectangle()
                             .fill(.black)
                             .frame(metrics.hourHand.size)
                             .offset(y: metrics.hourHand.offset)
                             .rotationEffect(hourHandRotation(context.date))
 
-                        Rectangle()
+                        SmoothRectangle()
                             .fill(.black)
                             .frame(metrics.minuteHand.size)
                             .offset(y: metrics.minuteHand.offset)
                             .rotationEffect(minuteHandRotation(context.date))
 
                         ZStack {
-                            Rectangle()
+                            SmoothRectangle()
                                 .fill(.red)
                                 .frame(metrics.secondHand.size)
 
