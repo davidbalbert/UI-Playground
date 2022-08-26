@@ -11,6 +11,7 @@
 		635B5E8328B56E8A00A7E3E3 /* CG+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635B5E8228B56E8A00A7E3E3 /* CG+Extensions.swift */; };
 		6360A24728B879AC00FC2587 /* SmoothRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6360A24628B879AC00FC2587 /* SmoothRectangle.swift */; };
 		6360A24928B87B4F00FC2587 /* SmoothCapsule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6360A24828B87B4F00FC2587 /* SmoothCapsule.swift */; };
+		6360A24B28B9272000FC2587 /* BezierCurves.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6360A24A28B9272000FC2587 /* BezierCurves.swift */; };
 		63C7F2A228AAE1CD00D7BE64 /* UIPlaygroundApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2A128AAE1CD00D7BE64 /* UIPlaygroundApp.swift */; };
 		63C7F2A428AAE1CD00D7BE64 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2A328AAE1CD00D7BE64 /* RootView.swift */; };
 		63C7F2A628AAE1CE00D7BE64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63C7F2A528AAE1CE00D7BE64 /* Assets.xcassets */; };
@@ -68,6 +69,7 @@
 		635B5E8228B56E8A00A7E3E3 /* CG+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CG+Extensions.swift"; sourceTree = "<group>"; };
 		6360A24628B879AC00FC2587 /* SmoothRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothRectangle.swift; sourceTree = "<group>"; };
 		6360A24828B87B4F00FC2587 /* SmoothCapsule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothCapsule.swift; sourceTree = "<group>"; };
+		6360A24A28B9272000FC2587 /* BezierCurves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BezierCurves.swift; sourceTree = "<group>"; };
 		63C7F29E28AAE1CD00D7BE64 /* UI Playground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UI Playground.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63C7F2A128AAE1CD00D7BE64 /* UIPlaygroundApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIPlaygroundApp.swift; sourceTree = "<group>"; };
 		63C7F2A328AAE1CD00D7BE64 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 				63C7F2D628AAF3E100D7BE64 /* Paths.swift */,
 				63EF793D28B0F84100E0EF1F /* PhotoGrid.swift */,
 				63C7F2A328AAE1CD00D7BE64 /* RootView.swift */,
+				6360A24A28B9272000FC2587 /* BezierCurves.swift */,
 				63C92F8C28B7D6B600DF9617 /* GravitySlider.swift */,
 				6360A24828B87B4F00FC2587 /* SmoothCapsule.swift */,
 				635B5E8028B56B0000A7E3E3 /* SevenSegment.swift */,
@@ -382,6 +385,7 @@
 				63C7F2D928AAF5D200D7BE64 /* Shapes.swift in Sources */,
 				63C92F8528B68C6A00DF9617 /* CardPunchout.swift in Sources */,
 				63FC0BFF28B3D492004A9874 /* LoadingIndicator.swift in Sources */,
+				6360A24B28B9272000FC2587 /* BezierCurves.swift in Sources */,
 				63C92F8728B6A7FB00DF9617 /* CoverFlow.swift in Sources */,
 				63EF798E28B2B9F300E0EF1F /* Measured.swift in Sources */,
 				6360A24928B87B4F00FC2587 /* SmoothCapsule.swift in Sources */,
