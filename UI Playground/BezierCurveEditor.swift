@@ -7,15 +7,7 @@
 
 import SwiftUI
 
-struct BezierCurve: Identifiable {
-    var id = UUID()
-    var p1: CGPoint
-    var p2: CGPoint
-    var cp1: CGPoint
-    var cp2: CGPoint
-}
-
-struct PointView: View {
+struct PointEditor: View {
     @Binding var point: CGPoint
 
     var body: some View {
@@ -61,11 +53,11 @@ struct CurveView: View {
             .strokedPath(StrokeStyle(lineWidth: 1))
             .fill(.blue)
 
-            PointView(point: $curve.p1)
-            PointView(point: $curve.p2)
+            PointEditor(point: $curve.p1)
+            PointEditor(point: $curve.p2)
 
-            PointView(point: $curve.cp1)
-            PointView(point: $curve.cp2)
+            PointEditor(point: $curve.cp1)
+            PointEditor(point: $curve.cp2)
         }
     }
 }
