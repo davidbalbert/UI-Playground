@@ -65,19 +65,19 @@ struct TiltableSlider: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack {
-                Capsule()
+                SmoothCapsule()
                     .fill(backgroundColor)
                     .frame(height: barHeight)
                     .overlay {
-                            Capsule()
-                                .inset(by: -1)
-                                .stroke(.black, lineWidth: 2)
-                                .shadow(color: shadowColor, radius: 0.65)
+                        Capsule()
+                                .inset(by: -2)
+                                .strokeBorder(.black, lineWidth: 2)
+                                .shadow(color: shadowColor, radius: 1.0)
                                 .padding([.leading, .trailing], -1)
-                                .clipShape(Capsule())
+                                .clipShape(SmoothCapsule())
                     }
 
-                Capsule()
+                SmoothCapsule()
                     .fill(controlAccentColor)
                     .frame(width: percent*proxy.size.width, height: barHeight)
                     .offset(x: percent*proxy.size.width/2 - proxy.size.width/2)

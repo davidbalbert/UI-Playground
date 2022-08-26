@@ -139,12 +139,15 @@ struct Clock: View {
                             .frame(metrics.hourHand.size)
                             .offset(y: metrics.hourHand.offset)
                             .rotationEffect(hourHandRotation(context.date))
+                            .shadow(radius: 3, y: 3)
 
                         SmoothRectangle()
                             .fill(.black)
                             .frame(metrics.minuteHand.size)
                             .offset(y: metrics.minuteHand.offset)
                             .rotationEffect(minuteHandRotation(context.date))
+                            .shadow(radius: 3, y: 4)
+
 
                         ZStack {
                             SmoothRectangle()
@@ -158,6 +161,9 @@ struct Clock: View {
                         }
                         .offset(y: metrics.secondHand.offset)
                         .rotationEffect(secondHandRotation(context.date))
+                        .compositingGroup()
+                        .shadow(radius: 3, y: 5)
+
 
                         Circle()
                             .fill(.red)
