@@ -13,10 +13,12 @@ struct TiltableSlider: View {
     @State var dragging: Bool = false
 
     var bounds: ClosedRange<Double>
+    var onEditingChanged: (Bool) -> Void
 
-    init(value: Binding<Double>, in bounds: ClosedRange<Double>) {
+    init(value: Binding<Double>, in bounds: ClosedRange<Double>, onEditingChanged: @escaping (Bool) -> Void) {
         _value = value
         self.bounds = bounds
+        self.onEditingChanged = onEditingChanged
     }
 
     var backgroundColor: Color {
@@ -104,6 +106,9 @@ struct TiltableSlider: View {
                         dragging = false
                     }
             )
+            .onChange(of: dragging) { newDragging in
+                onEditingChanged(newDragging)
+            }
         }
         .frame(height: knobDiameter)
 
@@ -113,57 +118,107 @@ struct TiltableSlider: View {
 struct GravitySlider: View {
     @State var value: Double = 50
     @State var angle: Angle = .zero
-
     @State var angleBeforeDrag: Angle? = nil
+    @State var dragging: Bool = false
+    @State var velocity: Double = 0
+    @State var lastTick: Date?
+
+    var bounds: ClosedRange<Double> = 0...100
+
+    var sliderWidth: Double {
+        400
+    }
 
     func radians(_ point: CGPoint) -> Double {
         atan2(point.y, point.x)
     }
 
-    func snappedToAxes(_ angle: Angle, tolerence: Double) -> Angle {
-        switch angle.degrees {
-        case (360-tolerence)...360:
-            return .degrees(0)
-        case 0...(0+tolerence):
-            return .degrees(0)
-        case (90-tolerence)...(90+tolerence):
-            return .degrees(90)
-        case (180-tolerence)...(180+tolerence):
-            return .degrees(180)
-        case (270-tolerence)...(270+tolerence):
-            return .degrees(270)
-        default:
-            return angle
+    var animationPaused: Bool {
+        if dragging || angle.degrees == 0 || angle.degrees == 180 {
+            return true
+        } else if (0...180).contains(angle.degrees) {
+            return value == bounds.upperBound && abs(velocity) < 0.03
+        } else {
+            return value == bounds.lowerBound && abs(velocity) < 0.03
+        }
+    }
+
+    func update(_ dt: TimeInterval) {
+        let g = 9.81 // m/2^2
+        let acceleration = g*sin(angle.radians)
+        velocity += acceleration*dt
+
+        let oldPosition = 1.5 * (value - bounds.lowerBound)/(bounds.upperBound - bounds.lowerBound)
+        let newPosition = oldPosition + velocity*dt
+        value = ((newPosition/1.5 * (bounds.upperBound - bounds.lowerBound)) + bounds.lowerBound).clamped(to: bounds)
+
+        if value == bounds.upperBound && velocity > 0 {
+            velocity = -0.15 * velocity
+        } else if value == bounds.lowerBound && velocity < 0 {
+            velocity = -0.15 * velocity
         }
     }
 
     var body: some View {
-        GeometryReader { proxy in
-            TiltableSlider(value: $value, in: 0...100)
-                .frame(width: 300)
-                .rotationEffect(angle)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .contentShape(Rectangle())
-                .gesture(
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { value in
-                            let frame = proxy.frame(in: .local)
-                            let center = CGPoint(x: frame.midX, y: frame.midY)
+        TimelineView(.animation(paused: animationPaused)) { context in
+            VStack {
+                GeometryReader { proxy in
+                    TiltableSlider(value: $value, in: bounds) { editing in
+                        dragging = editing
 
-                            angleBeforeDrag = angleBeforeDrag ?? angle
-
-                            let startRadians = angleBeforeDrag!.radians
-                            let offsetRadians = radians(value.location - center) - radians(value.startLocation - center)
-
-                            let tau = 2.0 * .pi
-                            let radians = (tau + startRadians + offsetRadians).truncatingRemainder(dividingBy: tau)
-                            angle = snappedToAxes(.radians(radians), tolerence: 15)
-                            print(angle.degrees)
+                        if !editing {
+                            velocity = 0
                         }
-                        .onEnded { value in
-                            angleBeforeDrag = nil
-                        }
-                )
+                    }
+                    .frame(width: sliderWidth)
+                    .rotationEffect(angle)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { value in
+                                let frame = proxy.frame(in: .local)
+                                let center = CGPoint(x: frame.midX, y: frame.midY)
+
+                                angleBeforeDrag = angleBeforeDrag ?? angle
+
+                                let startRadians = angleBeforeDrag!.radians
+                                let offsetRadians = radians(value.location - center) - radians(value.startLocation - center)
+
+                                let tau = 2.0 * .pi
+                                let radians = (tau + startRadians + offsetRadians).truncatingRemainder(dividingBy: tau)
+
+                                angle = .radians(radians)
+                            }
+                            .onEnded { value in
+                                angleBeforeDrag = nil
+                            }
+                    )
+                }
+                .onChange(of: animationPaused) { newAnimatingPaused in
+                    if newAnimatingPaused {
+                        lastTick = nil
+                    }
+                }
+                .onChange(of: context.date as Date) { newDate in
+                    guard let lastTick = lastTick else {
+                        lastTick = newDate
+                        return
+                    }
+
+                    let dt = newDate.timeIntervalSince(lastTick)
+                    update(dt)
+                    self.lastTick = newDate
+                }
+
+
+                Button("Reset") {
+                    angle = .degrees(0)
+                    value = 50
+                    velocity = 0
+                }
+                .padding()
+            }
         }
         .eraseToAnyView()
     }
