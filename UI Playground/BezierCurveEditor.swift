@@ -70,7 +70,7 @@ struct CurveView: View {
     }
 }
 
-struct BezierCurves: View {
+struct BezierCurveEditor: View {
     @State var curve: BezierCurve = BezierCurve(
         p1: CGPoint(x: 225, y: 175),
         p2: CGPoint(x: 675, y: 525),
@@ -95,6 +95,6 @@ struct BezierCurves: View {
 
 struct BezierCurves_Previews: PreviewProvider {
     static var previews: some View {
-        BezierCurves()
+        BezierCurveEditor()
     }
 }

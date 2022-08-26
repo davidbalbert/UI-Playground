@@ -44,7 +44,7 @@ struct RootView: View {
                     NavigationLink("Cover Flow", destination: CoverFlow())
                     NavigationLink("Pagination", destination: Pagination())
                     NavigationLink("Gravity Slider", destination: GravitySlider())
-                    NavigationLink("Bezier Curves", destination: BezierCurves())
+                    NavigationLink("Bezier Curve Visualizer", destination: BezierCurveVisualizer())
                 }
             }
             .listStyle(.sidebar)
