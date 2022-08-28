@@ -127,6 +127,7 @@ struct Clock: View {
                     .fill(.white)
                     .overlay {
                         ForEach(metrics.ticks) { tick in
+                            // Try RotatedShape(Rectangle)
                             SmoothRectangle()
                                 .fill(.black)
                                 .frame(tick.size)

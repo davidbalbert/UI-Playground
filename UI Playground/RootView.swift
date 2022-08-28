@@ -36,16 +36,24 @@ struct RootView: View {
                 }
 
                 Section("20 Sketches") {
-                    NavigationLink("Loading Indicator", destination: LoadingIndicator())
-                    NavigationLink("Fabric", destination: FabricEffect())
-                    NavigationLink("Clock", destination: Clocks())
-                    NavigationLink("Seven Segment Display", destination: SevenSegment())
-                    NavigationLink("Card Punchout", destination: CardPunchout())
-                    NavigationLink("Cover Flow", destination: CoverFlow())
-                    NavigationLink("Pagination", destination: Pagination())
-                    NavigationLink("Gravity Slider", destination: GravitySlider())
-                    NavigationLink("Bezier Curve Editor", destination: BezierCurveEditor())
-                    NavigationLink("Bezier Curve Visualizer", destination: BezierCurveVisualizer())
+                    Group {
+                        NavigationLink("Loading Indicator", destination: LoadingIndicator())
+                        NavigationLink("Fabric", destination: FabricEffect())
+                        NavigationLink("Clock", destination: Clocks())
+                        NavigationLink("Seven Segment Display", destination: SevenSegment())
+                        NavigationLink("Card Punchout", destination: CardPunchout())
+                        NavigationLink("Cover Flow", destination: CoverFlow())
+                        NavigationLink("Pagination", destination: Pagination())
+                        NavigationLink("Gravity Slider", destination: GravitySlider())
+                        NavigationLink("Bezier Curve Editor", destination: BezierCurveEditor())
+                        NavigationLink("Bezier Curve Visualizer", destination: BezierCurveVisualizer())
+                    }
+
+                    Group {
+                        NavigationLink("Custom Knob Slider", destination: CustomKnobSliders())
+                        NavigationLink("Metaballs", destination: Metaballs())
+                        NavigationLink("Icon Morph", destination: IconMorph())
+                    }
                 }
             }
             .listStyle(.sidebar)
