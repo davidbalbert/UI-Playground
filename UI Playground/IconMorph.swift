@@ -75,11 +75,7 @@ struct MorphingImage: View {
             let progress = progress(at: context.date)
 
             Canvas { ctx, size in
-//                print(alphaOld(progress: progress), alphaNew(progress: progress))
-//                print(blur(progress: progress))
-
                 ctx.addFilter(.alphaThreshold(min: 0.5))
-
 
                 ctx.drawLayer { ctx in
                     ctx.addFilter(.blur(radius: blur(progress: progress)))
