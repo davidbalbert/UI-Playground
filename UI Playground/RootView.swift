@@ -33,6 +33,7 @@ struct RootView: View {
                 Section("Experiments") {
                     NavigationLink("Circular Buttons", destination: CircularButtons())
                     NavigationLink("Photo Grid", destination: PhotoGrid())
+                    NavigationLink("Tables", destination: Tables())
                 }
 
                 Section("20 Sketches") {
