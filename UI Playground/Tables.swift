@@ -389,19 +389,31 @@ class TableHostCell_: NSTableCellView {
     }
 }
 
-struct Table_<Value, Rows, Columns>: NSViewRepresentable where Value == Rows.TableRowValue, Rows: TableRowContent_, Columns: TableColumnContent_, Rows.TableRowValue == Columns.TableRowValue {
+struct TableConfiguration<Value> where Value: Identifiable {
+    var columns: [TableColumnOutput<Value>]
+    var rows: [Value]
+
+    func column(for id: UUID) -> TableColumnOutput<Value>? {
+        columns.first(where: { $0.id == id })
+    }
+
+    var rowCount: Int {
+        rows.count
+    }
+}
+
+struct TableRepresentable<Value>: NSViewRepresentable where Value: Identifiable {
+    var configuration: TableConfiguration<Value>
 
     class Coordinator: NSObject, NSTableViewDelegate, NSTableViewDataSource {
-        var columns: [TableColumnOutput<Value>]
-        var rows: Rows
+        var configuration: TableConfiguration<Value>
 
-        init(columns: [TableColumnOutput<Value>], rows: Rows) {
-            self.columns = columns
-            self.rows = rows
+        init(configuration: TableConfiguration<Value>) {
+            self.configuration = configuration
         }
 
         func numberOfRows(in tableView: NSTableView) -> Int {
-            rows.count
+            configuration.rowCount
         }
 
         func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
@@ -409,7 +421,11 @@ struct Table_<Value, Rows, Columns>: NSViewRepresentable where Value == Rows.Tab
                 return nil
             }
 
-            guard let column = columns.first(where: { $0.id == UUID(uuidString: tableColumn.identifier.rawValue) }) else {
+            guard let columnId = UUID(uuidString: tableColumn.identifier.rawValue) else {
+                return nil
+            }
+
+            guard let column = configuration.column(for: columnId) else {
                 return nil
             }
 
@@ -420,29 +436,22 @@ struct Table_<Value, Rows, Columns>: NSViewRepresentable where Value == Rows.Tab
                 cellView = TableHostCell_(AnyView(EmptyView()))
             }
 
-            cellView.hostingView.rootView = column.makeBody(rows.values[row])
+            cellView.hostingView.rootView = column.makeBody(configuration.rows[row])
 
             return cellView
         }
     }
 
-    var columns: [TableColumnOutput<Value>]
-    var rows: Rows
-
-    init(@TableColumnBuilder_<Value> columns: () -> Columns, @TableRowBuilder_<Value> rows: () -> Rows) {
-        self.columns = columns().outputs
-        self.rows = rows()
-    }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(columns: columns, rows: rows)
+        Coordinator(configuration: configuration)
     }
 
     func makeNSView(context: Context) -> NSScrollView {
         let tableView = NSTableView()
         tableView.usesAlternatingRowBackgroundColors = true
 
-        for column in columns {
+        for column in configuration.columns {
             let tableColumn = NSTableColumn(identifier: .init(column.id.uuidString))
             tableColumn.title = column.title
             tableView.addTableColumn(tableColumn)
@@ -458,6 +467,20 @@ struct Table_<Value, Rows, Columns>: NSViewRepresentable where Value == Rows.Tab
     }
 
     func updateNSView(_ nsView: NSScrollView, context: Context) {
+    }
+}
+
+struct Table_<Value, Rows, Columns>: View where Value == Rows.TableRowValue, Rows: TableRowContent_, Columns: TableColumnContent_, Rows.TableRowValue == Columns.TableRowValue {
+    var columns: Columns
+    var rows: Rows
+
+    init(@TableColumnBuilder_<Value> columns: () -> Columns, @TableRowBuilder_<Value> rows: () -> Rows) {
+        self.columns = columns()
+        self.rows = rows()
+    }
+
+    var body: some View {
+        TableRepresentable(configuration: TableConfiguration(columns: columns.outputs, rows: rows.values))
     }
 }
 
