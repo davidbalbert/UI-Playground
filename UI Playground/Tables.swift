@@ -79,20 +79,33 @@ struct MyTableRepresentable: NSViewRepresentable {
 
 // MARK: - Columns
 
-protocol TableColumnContent_ {
-    associatedtype TableRowValue: Identifiable
-    associatedtype V: View
+struct TableColumnOutput<RowValue>: Identifiable where RowValue: Identifiable {
+    var id = UUID()
+    var title: String
+    var content: (RowValue) -> AnyView
 
-    var titles: [String] { get }
-    func makeContent(_ value: TableRowValue) -> V
+    func makeBody(_ value: RowValue) -> AnyView {
+        content(value)
+    }
 }
 
-struct TableColumn_<RowValue, Content>: TableColumnContent_ where RowValue: Identifiable, Content: View {
+protocol TableColumnContent_ {
+    associatedtype TableRowValue: Identifiable
+    associatedtype Body: View
+
+    var titles: [String] { get }
+    var outputs: [TableColumnOutput<TableRowValue>] { get }
+    func makeBody(_ value: TableRowValue) -> Body
+}
+
+struct TableColumn_<RowValue, Content>: TableColumnContent_, Identifiable where RowValue: Identifiable, Content: View {
 
     typealias TableRowValue = RowValue
 
     var title: String
     var content: (RowValue) -> Content
+
+    var id = UUID()
 
     init(_ title: String, @ViewBuilder content: @escaping (RowValue) -> Content) {
         self.title = title
@@ -103,7 +116,20 @@ struct TableColumn_<RowValue, Content>: TableColumnContent_ where RowValue: Iden
         [title]
     }
 
-    func makeContent(_ value: RowValue) -> Content {
+    var outputs: [TableColumnOutput<RowValue>] {
+        [
+            TableColumnOutput(title: title) { value in
+                AnyView(
+                    HStack {
+                        content(value)
+                        Spacer()
+                    }
+                )
+            }
+        ]
+    }
+
+    func makeBody(_ value: RowValue) -> Content {
         content(value)
     }
 }
@@ -133,9 +159,13 @@ struct TupleTableColumnContent2<RowValue, C0, C1>: TableColumnContent_ where Row
         content.0.titles + content.1.titles
     }
 
-    @ViewBuilder func makeContent(_ value: RowValue) -> some View {
-        content.0.makeContent(value)
-        content.1.makeContent(value)
+    var outputs: [TableColumnOutput<RowValue>] {
+        content.0.outputs + content.1.outputs
+    }
+
+    @ViewBuilder func makeBody(_ value: RowValue) -> some View {
+        content.0.makeBody(value)
+        content.1.makeBody(value)
     }
 }
 
@@ -152,10 +182,14 @@ struct TupleTableColumnContent3<RowValue, C0, C1, C2>: TableColumnContent_ where
         content.0.titles + content.1.titles + content.2.titles
     }
 
-    @ViewBuilder func makeContent(_ value: RowValue) -> some View {
-        content.0.makeContent(value)
-        content.1.makeContent(value)
-        content.2.makeContent(value)
+    var outputs: [TableColumnOutput<RowValue>] {
+        content.0.outputs + content.1.outputs + content.2.outputs
+    }
+
+    @ViewBuilder func makeBody(_ value: RowValue) -> some View {
+        content.0.makeBody(value)
+        content.1.makeBody(value)
+        content.2.makeBody(value)
     }
 }
 
@@ -172,11 +206,15 @@ struct TupleTableColumnContent4<RowValue, C0, C1, C2, C3>: TableColumnContent_ w
         content.0.titles + content.1.titles + content.2.titles + content.3.titles
     }
 
-    @ViewBuilder func makeContent(_ value: RowValue) -> some View {
-        content.0.makeContent(value)
-        content.1.makeContent(value)
-        content.2.makeContent(value)
-        content.3.makeContent(value)
+    var outputs: [TableColumnOutput<RowValue>] {
+        content.0.outputs + content.1.outputs + content.2.outputs + content.3.outputs
+    }
+
+    @ViewBuilder func makeBody(_ value: RowValue) -> some View {
+        content.0.makeBody(value)
+        content.1.makeBody(value)
+        content.2.makeBody(value)
+        content.3.makeBody(value)
     }
 }
 
@@ -207,6 +245,7 @@ struct TupleTableColumnContent4<RowValue, C0, C1, C2, C3>: TableColumnContent_ w
 protocol TableRowContent_ {
     associatedtype TableRowValue: Identifiable
     var values: [TableRowValue] { get }
+    var count: Int { get }
 }
 
 struct TableRow_<Value>: TableRowContent_ where Value: Identifiable {
@@ -220,6 +259,10 @@ struct TableRow_<Value>: TableRowContent_ where Value: Identifiable {
 
     var values: [Value] {
         [value]
+    }
+
+    var count: Int {
+        1
     }
 }
 
@@ -236,6 +279,10 @@ struct TupleTableRowContent2<Value, C0, C1>: TableRowContent_ where Value: Ident
     var values: [Value] {
         content.0.values + content.1.values
     }
+
+    var count: Int {
+        content.0.count + content.1.count
+    }
 }
 
 struct TupleTableRowContent3<Value, C0, C1, C2>: TableRowContent_ where Value: Identifiable, Value == C0.TableRowValue, C0: TableRowContent_, C1: TableRowContent_, C2: TableRowContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue {
@@ -251,6 +298,10 @@ struct TupleTableRowContent3<Value, C0, C1, C2>: TableRowContent_ where Value: I
     var values: [Value] {
         content.0.values + content.1.values + content.2.values
     }
+
+    var count: Int {
+        content.0.count + content.1.count + content.2.count
+    }
 }
 
 struct TupleTableRowContent4<Value, C0, C1, C2, C3>: TableRowContent_ where Value: Identifiable, Value == C0.TableRowValue, C0: TableRowContent_, C1: TableRowContent_, C2: TableRowContent_, C3: TableRowContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue, C2.TableRowValue == C3.TableRowValue {
@@ -265,6 +316,10 @@ struct TupleTableRowContent4<Value, C0, C1, C2, C3>: TableRowContent_ where Valu
 
     var values: [Value] {
         content.0.values + content.1.values + content.2.values + content.3.values
+    }
+
+    var count: Int {
+        content.0.count + content.1.count + content.2.count + content.3.count
     }
 }
 
@@ -286,33 +341,123 @@ struct TupleTableRowContent4<Value, C0, C1, C2, C3>: TableRowContent_ where Valu
     }
 }
 
-
 // MARK: - Table
 
-struct Table_<Value, Rows, Columns>: View where Value == Rows.TableRowValue, Rows: TableRowContent_, Columns: TableColumnContent_, Rows.TableRowValue == Columns.TableRowValue {
-    var columns: Columns
+//struct Table_<Value, Rows, Columns>: View where Value == Rows.TableRowValue, Rows: TableRowContent_, Columns: TableColumnContent_, Rows.TableRowValue == Columns.TableRowValue {
+//    var columns: Columns
+//    var rows: Rows
+//
+//    init(@TableColumnBuilder_<Value> columns: () -> Columns, @TableRowBuilder_<Value> rows: () -> Rows) {
+//        self.columns = columns()
+//        self.rows = rows()
+//    }
+//
+//    var body: some View {
+//        VStack {
+//            HStack {
+//                ForEach(columns.titles, id: \.self) { title in
+//                    Text(title)
+//                }
+//            }
+//
+//            ForEach(rows.values) { value in
+//                HStack {
+//                    columns.makeContent(value)
+//                }
+//            }
+//        }
+//        .frame(maxHeight: .infinity)
+//    }
+//}
+
+class TableHostCell_: NSTableCellView {
+    var hostingView: NSHostingView<AnyView>
+
+    init(_ content: AnyView) {
+        hostingView = NSHostingView(rootView: content)
+        hostingView.translatesAutoresizingMaskIntoConstraints = false
+        super.init(frame: .zero)
+        addSubview(hostingView)
+
+        hostingView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2).isActive = true
+        hostingView.widthAnchor.constraint(equalTo: widthAnchor, constant: -2).isActive = true
+        hostingView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 0).isActive = true
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+struct Table_<Value, Rows, Columns>: NSViewRepresentable where Value == Rows.TableRowValue, Rows: TableRowContent_, Columns: TableColumnContent_, Rows.TableRowValue == Columns.TableRowValue {
+
+    class Coordinator: NSObject, NSTableViewDelegate, NSTableViewDataSource {
+        var columns: [TableColumnOutput<Value>]
+        var rows: Rows
+
+        init(columns: [TableColumnOutput<Value>], rows: Rows) {
+            self.columns = columns
+            self.rows = rows
+        }
+
+        func numberOfRows(in tableView: NSTableView) -> Int {
+            rows.count
+        }
+
+        func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+            guard let tableColumn else {
+                return nil
+            }
+
+            guard let column = columns.first(where: { $0.id == UUID(uuidString: tableColumn.identifier.rawValue) }) else {
+                return nil
+            }
+
+            let cellView: TableHostCell_
+            if let v = tableView.makeView(withIdentifier: tableColumn.identifier, owner: self) as? TableHostCell_ {
+                cellView = v
+            } else {
+                cellView = TableHostCell_(AnyView(EmptyView()))
+            }
+
+            cellView.hostingView.rootView = column.makeBody(rows.values[row])
+
+            return cellView
+        }
+    }
+
+    var columns: [TableColumnOutput<Value>]
     var rows: Rows
 
     init(@TableColumnBuilder_<Value> columns: () -> Columns, @TableRowBuilder_<Value> rows: () -> Rows) {
-        self.columns = columns()
+        self.columns = columns().outputs
         self.rows = rows()
     }
 
-    var body: some View {
-        VStack {
-            HStack {
-                ForEach(columns.titles, id: \.self) { title in
-                    Text(title)
-                }
-            }
+    func makeCoordinator() -> Coordinator {
+        Coordinator(columns: columns, rows: rows)
+    }
 
-            ForEach(rows.values) { value in
-                HStack {
-                    columns.makeContent(value)
-                }
-            }
+    func makeNSView(context: Context) -> NSScrollView {
+        let tableView = NSTableView()
+        tableView.usesAlternatingRowBackgroundColors = true
+
+        for column in columns {
+            let tableColumn = NSTableColumn(identifier: .init(column.id.uuidString))
+            tableColumn.title = column.title
+            tableView.addTableColumn(tableColumn)
         }
-        .frame(maxHeight: .infinity)
+
+        tableView.delegate = context.coordinator
+        tableView.dataSource = context.coordinator
+
+        let scrollView = NSScrollView()
+        scrollView.documentView = tableView
+
+        return scrollView
+    }
+
+    func updateNSView(_ nsView: NSScrollView, context: Context) {
     }
 }
 
@@ -347,8 +492,6 @@ struct Tables: View {
                 TableRow(Person(firstName: "David", lastName: "Albert", age: 36))
                 TableRow(Person(firstName: "Bridget", lastName: "McCarthy", age: 36))
             }
-
-            let _ = dump(nativeTable)
 
             Table_ {
                 TableColumn_("First name", value: \.firstName)
