@@ -108,6 +108,18 @@ struct TableColumn_<RowValue, Content>: TableColumnContent_ where RowValue: Iden
     }
 }
 
+extension TableColumn_ {
+    init(_ title: String, value keyPath: KeyPath<RowValue, String>) where Content == Text {
+        self.title = title
+        self.content = { Text($0[keyPath: keyPath]) }
+    }
+
+    init(_ title: String, value keyPath: KeyPath<RowValue, String?>) where Content == Text {
+        self.title = title
+        self.content = { Text($0[keyPath: keyPath] ?? "") }
+    }
+}
+
 struct TupleTableColumnContent2<RowValue, C0, C1>: TableColumnContent_ where RowValue: Identifiable, RowValue == C0.TableRowValue, C0: TableColumnContent_, C1: TableColumnContent_, C0.TableRowValue == C1.TableRowValue {
     typealias TableRowValue = RowValue
 
@@ -169,6 +181,10 @@ struct TupleTableColumnContent4<RowValue, C0, C1, C2, C3>: TableColumnContent_ w
 }
 
 @resultBuilder struct TableColumnBuilder_<RowValue> where RowValue: Identifiable {
+    static func buildExpression<Content>(_ column: TableColumn_<RowValue, Content>) -> TableColumn_<RowValue, Content> {
+        column
+    }
+
     static func buildBlock<Column>(_ column: Column) -> Column where RowValue == Column.TableRowValue, Column: TableColumnContent_ {
         column
     }
@@ -306,6 +322,7 @@ struct Person: Identifiable {
     var id = UUID()
     var firstName: String
     var lastName: String
+    var age: Int
 }
 
 struct Tables: View {
@@ -323,23 +340,26 @@ struct Tables: View {
             let nativeTable = Table {
                 TableColumn("First name", value: \.firstName)
                 TableColumn("Last name", value: \.lastName)
+                TableColumn("Age") { person in
+                    Text("\(person.age)")
+                }
             } rows: {
-                TableRow(Person(firstName: "David", lastName: "Albert"))
-                TableRow(Person(firstName: "Bridget", lastName: "McCarthy"))
+                TableRow(Person(firstName: "David", lastName: "Albert", age: 36))
+                TableRow(Person(firstName: "Bridget", lastName: "McCarthy", age: 36))
             }
 
             let _ = dump(nativeTable)
 
             Table_ {
-                TableColumn_<Person, Text>("First name") { person in
-                    Text(person.firstName)
+                TableColumn_("First name", value: \.firstName)
+                TableColumn_("Last name", value: \.lastName)
+                TableColumn_("Age") { person in
+                    Text("\(person.age)")
                 }
-                TableColumn_<Person, Text>("Last name") { person in
-                    Text(person.lastName)
-                }
+
             } rows: {
-                TableRow_(Person(firstName: "David", lastName: "Albert"))
-                TableRow_(Person(firstName: "Bridget", lastName: "McCarthy"))
+                TableRow_(Person(firstName: "David", lastName: "Albert", age: 36))
+                TableRow_(Person(firstName: "Bridget", lastName: "McCarthy", age: 36))
             }
 
             nativeTable
