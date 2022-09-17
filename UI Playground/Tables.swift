@@ -77,52 +77,94 @@ struct MyTableRepresentable: NSViewRepresentable {
     }
 }
 
+// MARK: - Columns
+
 protocol TableColumnContent_ {
     associatedtype TableRowValue: Identifiable
-}
+    associatedtype V: View
 
-protocol TableColumnTitles {
     var titles: [String] { get }
+    func makeContent(_ value: TableRowValue) -> V
 }
 
-struct TableColumn_<RowValue>: TableColumnContent_ where RowValue: Identifiable {
+struct TableColumn_<RowValue, Content>: TableColumnContent_ where RowValue: Identifiable, Content: View {
+
     typealias TableRowValue = RowValue
 
     var title: String
+    var content: (RowValue) -> Content
 
-    init(_ label: String) {
-        self.title = label
+    init(_ title: String, @ViewBuilder content: @escaping (RowValue) -> Content) {
+        self.title = title
+        self.content = content
     }
-}
 
-extension TableColumn_: TableColumnTitles {
     var titles: [String] {
         [title]
     }
-}
 
-struct TupleTableColumnContent_<RowValue, T>: TableColumnContent_ where RowValue: Identifiable {
-    typealias TableRowValue = RowValue
-
-    var value: T
-
-    init(value: T) {
-        self.value = value
+    func makeContent(_ value: RowValue) -> Content {
+        content(value)
     }
 }
 
-extension TupleTableColumnContent_: TableColumnTitles {
+struct TupleTableColumnContent2<RowValue, C0, C1>: TableColumnContent_ where RowValue: Identifiable, RowValue == C0.TableRowValue, C0: TableColumnContent_, C1: TableColumnContent_, C0.TableRowValue == C1.TableRowValue {
+    typealias TableRowValue = RowValue
+
+    let content: (C0, C1)
+
+    init (_ content: (C0, C1)) {
+        self.content = content
+    }
+
     var titles: [String] {
-        var res: [String] = []
+        content.0.titles + content.1.titles
+    }
 
-        // TODO: Switch to Regex in Swift 5.7
-        for child in Mirror(reflecting: value).children {
-            if child.label?.range(of: #"^\.[0-9]+"#, options: .regularExpression) != nil, let t = child.value as? TableColumnTitles {
-                res.append(contentsOf: t.titles)
-            }
-        }
+    @ViewBuilder func makeContent(_ value: RowValue) -> some View {
+        content.0.makeContent(value)
+        content.1.makeContent(value)
+    }
+}
 
-        return res
+struct TupleTableColumnContent3<RowValue, C0, C1, C2>: TableColumnContent_ where RowValue: Identifiable, RowValue == C0.TableRowValue, C0: TableColumnContent_, C1: TableColumnContent_, C2: TableColumnContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue{
+    typealias TableRowValue = RowValue
+
+    let content: (C0, C1, C2)
+
+    init (_ content: (C0, C1, C2)) {
+        self.content = content
+    }
+
+    var titles: [String] {
+        content.0.titles + content.1.titles + content.2.titles
+    }
+
+    @ViewBuilder func makeContent(_ value: RowValue) -> some View {
+        content.0.makeContent(value)
+        content.1.makeContent(value)
+        content.2.makeContent(value)
+    }
+}
+
+struct TupleTableColumnContent4<RowValue, C0, C1, C2, C3>: TableColumnContent_ where RowValue: Identifiable, RowValue == C0.TableRowValue, C0: TableColumnContent_, C1: TableColumnContent_, C2: TableColumnContent_, C3: TableColumnContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue, C2.TableRowValue == C3.TableRowValue {
+    typealias TableRowValue = RowValue
+
+    let content: (C0, C1, C2, C3)
+
+    init (_ content: (C0, C1, C2, C3)) {
+        self.content = content
+    }
+
+    var titles: [String] {
+        content.0.titles + content.1.titles + content.2.titles + content.3.titles
+    }
+
+    @ViewBuilder func makeContent(_ value: RowValue) -> some View {
+        content.0.makeContent(value)
+        content.1.makeContent(value)
+        content.2.makeContent(value)
+        content.3.makeContent(value)
     }
 }
 
@@ -131,39 +173,134 @@ extension TupleTableColumnContent_: TableColumnTitles {
         column
     }
 
-    static func buildBlock<C0, C1>(_ c0: C0, _ c1: C1) -> TupleTableColumnContent_<RowValue, (C0, C1)> where RowValue == C0.TableRowValue, C0: TableColumnContent_, C1: TableColumnContent_, C0.TableRowValue == C1.TableRowValue {
-        TupleTableColumnContent_<RowValue, (C0, C1)>(value: (c0, c1))
+    static func buildBlock<C0, C1>(_ c0: C0, _ c1: C1) -> TupleTableColumnContent2<RowValue, C0, C1> where RowValue == C0.TableRowValue, C0: TableColumnContent_, C1: TableColumnContent_, C0.TableRowValue == C1.TableRowValue {
+        TupleTableColumnContent2<RowValue, C0, C1>((c0, c1))
     }
 
-    static func buildBlock<C0, C1, C2>(_ c0: C0, _ c1: C1, _ c2: C2) -> TupleTableColumnContent_<RowValue, (C0, C1, C2)> where RowValue == C0.TableRowValue, C0: TableColumnContent_, C1: TableColumnContent_, C2: TableColumnContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue {
-        TupleTableColumnContent_<RowValue, (C0, C1, C2)>(value: (c0, c1, c2))
+    static func buildBlock<C0, C1, C2>(_ c0: C0, _ c1: C1, _ c2: C2) -> TupleTableColumnContent3<RowValue, C0, C1, C2> where RowValue == C0.TableRowValue, C0: TableColumnContent_, C1: TableColumnContent_, C2: TableColumnContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue {
+        TupleTableColumnContent3<RowValue, C0, C1, C2>((c0, c1, c2))
     }
 
-    static func buildBlock<C0, C1, C2, C3>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3) -> TupleTableColumnContent_<RowValue, (C0, C1, C2, C3)> where RowValue == C0.TableRowValue, C0: TableColumnContent_, C1: TableColumnContent_, C2: TableColumnContent_, C3: TableColumnContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue, C2.TableRowValue == C3.TableRowValue {
-        TupleTableColumnContent_<RowValue, (C0, C1, C2, C3)>(value: (c0, c1, c2, c3))
+    static func buildBlock<C0, C1, C2, C3>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3) -> TupleTableColumnContent4<RowValue, C0, C1, C2, C3> where RowValue == C0.TableRowValue, C0: TableColumnContent_, C1: TableColumnContent_, C2: TableColumnContent_, C3: TableColumnContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue, C2.TableRowValue == C3.TableRowValue {
+        TupleTableColumnContent4<RowValue, C0, C1, C2, C3>((c0, c1, c2, c3))
     }
 }
 
-struct MyTable<Value, Columns>: View where Value == Columns.TableRowValue, Columns: TableColumnContent_ {
-    var columns: Columns
+// MARK: - Rows
 
-    init(@TableColumnBuilder_<Value> columns: () -> Columns) {
+protocol TableRowContent_ {
+    associatedtype TableRowValue: Identifiable
+    var values: [TableRowValue] { get }
+}
+
+struct TableRow_<Value>: TableRowContent_ where Value: Identifiable {
+    typealias TableRowValue = Value
+
+    var value: Value
+
+    init(_ value: Value) {
+        self.value = value
+    }
+
+    var values: [Value] {
+        [value]
+    }
+}
+
+struct TupleTableRowContent2<Value, C0, C1>: TableRowContent_ where Value: Identifiable, Value == C0.TableRowValue, C0: TableRowContent_, C1: TableRowContent_, C0.TableRowValue == C1.TableRowValue {
+
+    typealias TableRowValue = Value
+
+    var content: (C0, C1)
+
+    init(_ content: (C0, C1)) {
+        self.content = content
+    }
+
+    var values: [Value] {
+        content.0.values + content.1.values
+    }
+}
+
+struct TupleTableRowContent3<Value, C0, C1, C2>: TableRowContent_ where Value: Identifiable, Value == C0.TableRowValue, C0: TableRowContent_, C1: TableRowContent_, C2: TableRowContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue {
+
+    typealias TableRowValue = Value
+
+    var content: (C0, C1, C2)
+
+    init(_ content: (C0, C1, C2)) {
+        self.content = content
+    }
+
+    var values: [Value] {
+        content.0.values + content.1.values + content.2.values
+    }
+}
+
+struct TupleTableRowContent4<Value, C0, C1, C2, C3>: TableRowContent_ where Value: Identifiable, Value == C0.TableRowValue, C0: TableRowContent_, C1: TableRowContent_, C2: TableRowContent_, C3: TableRowContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue, C2.TableRowValue == C3.TableRowValue {
+
+    typealias TableRowValue = Value
+
+    var content: (C0, C1, C2, C3)
+
+    init(_ content: (C0, C1, C2, C3)) {
+        self.content = content
+    }
+
+    var values: [Value] {
+        content.0.values + content.1.values + content.2.values + content.3.values
+    }
+}
+
+@resultBuilder struct TableRowBuilder_<Value> where Value: Identifiable {
+    static func buildBlock<Content>(_ content: Content) -> Content where Value == Content.TableRowValue, Content: TableRowContent_ {
+        content
+    }
+
+    static func buildBlock<C0, C1>(_ c0: C0, _ c1: C1) -> TupleTableRowContent2<Value, C0, C1> where Value == C0.TableRowValue, C0: TableRowContent_, C1: TableRowContent_, C0.TableRowValue == C1.TableRowValue {
+        TupleTableRowContent2<Value, C0, C1>((c0, c1))
+    }
+
+    static func buildBlock<C0, C1, C2>(_ c0: C0, _ c1: C1, _ c2: C2) -> TupleTableRowContent3<Value, C0, C1, C2> where Value == C0.TableRowValue, C0: TableRowContent_, C1: TableRowContent_, C2: TableRowContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue {
+        TupleTableRowContent3<Value, C0, C1, C2>((c0, c1, c2))
+    }
+
+    static func buildBlock<C0, C1, C2, C3>(_ c0: C0, _ c1: C1, _ c2: C2, _ c3: C3) -> TupleTableRowContent4<Value, C0, C1, C2, C3> where Value == C0.TableRowValue, C0: TableRowContent_, C1: TableRowContent_, C2: TableRowContent_, C3: TableRowContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue, C2.TableRowValue == C3.TableRowValue {
+        TupleTableRowContent4<Value, C0, C1, C2, C3>((c0, c1, c2, c3))
+    }
+}
+
+
+// MARK: - Table
+
+struct Table_<Value, Rows, Columns>: View where Value == Rows.TableRowValue, Rows: TableRowContent_, Columns: TableColumnContent_, Rows.TableRowValue == Columns.TableRowValue {
+    var columns: Columns
+    var rows: Rows
+
+    init(@TableColumnBuilder_<Value> columns: () -> Columns, @TableRowBuilder_<Value> rows: () -> Rows) {
         self.columns = columns()
+        self.rows = rows()
     }
 
     var body: some View {
         VStack {
             HStack {
-                if let titles = (columns as? TableColumnTitles)?.titles {
-                    ForEach(titles, id: \.self) { title in
-                        Text(title)
-                    }
+                ForEach(columns.titles, id: \.self) { title in
+                    Text(title)
+                }
+            }
+
+            ForEach(rows.values) { value in
+                HStack {
+                    columns.makeContent(value)
                 }
             }
         }
         .frame(maxHeight: .infinity)
     }
 }
+
+// MARK: - Usage
 
 struct Person: Identifiable {
     var id = UUID()
@@ -183,20 +320,29 @@ struct Tables: View {
 
     var body: some View {
         VStack {
-            MyTable {
-                TableColumn_<Person>("First name")
-                TableColumn_<Person>("Last name")
-                TableColumn_<Person>("Something else")
-                TableColumn_<Person>("Hmm")
-            }
-
-            Table {
+            let nativeTable = Table {
                 TableColumn("First name", value: \.firstName)
                 TableColumn("Last name", value: \.lastName)
             } rows: {
                 TableRow(Person(firstName: "David", lastName: "Albert"))
                 TableRow(Person(firstName: "Bridget", lastName: "McCarthy"))
             }
+
+            let _ = dump(nativeTable)
+
+            Table_ {
+                TableColumn_<Person, Text>("First name") { person in
+                    Text(person.firstName)
+                }
+                TableColumn_<Person, Text>("Last name") { person in
+                    Text(person.lastName)
+                }
+            } rows: {
+                TableRow_(Person(firstName: "David", lastName: "Albert"))
+                TableRow_(Person(firstName: "Bridget", lastName: "McCarthy"))
+            }
+
+            nativeTable
         }
         .eraseToAnyView()
     }
