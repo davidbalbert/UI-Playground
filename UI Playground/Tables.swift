@@ -379,9 +379,10 @@ class TableHostCell_: NSTableCellView {
         super.init(frame: .zero)
         addSubview(hostingView)
 
-        hostingView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2).isActive = true
-        hostingView.widthAnchor.constraint(equalTo: widthAnchor, constant: -2).isActive = true
-        hostingView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 0).isActive = true
+        hostingView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0).isActive = true
+        hostingView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0).isActive = true
+        hostingView.topAnchor.constraint(equalTo: topAnchor, constant: 0).isActive = true
+        hostingView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0).isActive = true
     }
 
     required init?(coder: NSCoder) {
@@ -441,7 +442,6 @@ struct TableRepresentable<Value>: NSViewRepresentable where Value: Identifiable 
             return cellView
         }
     }
-
 
     func makeCoordinator() -> Coordinator {
         Coordinator(configuration: configuration)
@@ -522,7 +522,6 @@ struct Tables: View {
                 TableColumn_("Age") { person in
                     Text("\(person.age)")
                 }
-
             } rows: {
                 TableRow_(Person(firstName: "David", lastName: "Albert", age: 36))
                 TableRow_(Person(firstName: "Bridget", lastName: "McCarthy", age: 36))
