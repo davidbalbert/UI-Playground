@@ -421,6 +421,10 @@ struct TableRepresentable<Value, Columns>: NSViewRepresentable where Value: Iden
 
             return configuration.tableView(tableView, viewFor: tableColumn, row: row)
         }
+
+        func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
+            return false
+        }
     }
 
     func makeCoordinator() -> Coordinator {
@@ -430,6 +434,7 @@ struct TableRepresentable<Value, Columns>: NSViewRepresentable where Value: Iden
     func makeNSView(context: Context) -> NSScrollView {
         let tableView = NSTableView()
         tableView.usesAlternatingRowBackgroundColors = true
+        tableView.allowsColumnReordering = false
 
         configuration.makeNSTableColumns(tableView)
 
