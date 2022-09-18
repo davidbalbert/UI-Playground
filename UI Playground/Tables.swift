@@ -438,6 +438,7 @@ struct TableRepresentable<Value, Columns>: NSViewRepresentable where Value: Iden
 
         configuration.makeNSTableColumns(tableView)
 
+        tableView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
         tableView.delegate = context.coordinator
         tableView.dataSource = context.coordinator
 
