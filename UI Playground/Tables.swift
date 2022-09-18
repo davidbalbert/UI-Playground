@@ -32,11 +32,11 @@ struct MyTableRepresentable: NSViewRepresentable {
                 cellView.autoresizingMask = .height
                 cellView.textField = textField
                 cellView.addSubview(textField)
+                cellView.identifier = tableColumn.identifier
 
                 textField.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 2).isActive = true
                 textField.widthAnchor.constraint(equalTo: cellView.widthAnchor, constant: -2).isActive = true
                 textField.centerYAnchor.constraint(equalTo: cellView.centerYAnchor, constant: 0).isActive = true
-
             }
 
             cellView.textField?.stringValue = "\(tableColumn.title) \(row)"
@@ -80,7 +80,7 @@ struct MyTableRepresentable: NSViewRepresentable {
 // MARK: - Columns
 
 struct TableColumnOutput<RowValue>: Identifiable where RowValue: Identifiable {
-    var id = UUID()
+    var id: UUID
     var title: String
     var content: (RowValue) -> AnyView
 
@@ -96,10 +96,10 @@ protocol TableColumnContent_ {
     var titles: [String] { get }
     var outputs: [TableColumnOutput<TableRowValue>] { get }
     func makeBody(_ value: TableRowValue) -> Body
+    func makeCellView(_ value: TableRowValue, tableView: NSTableView, tableColumn: NSTableColumn) -> NSView?
 }
 
 struct TableColumn_<RowValue, Content>: TableColumnContent_, Identifiable where RowValue: Identifiable, Content: View {
-
     typealias TableRowValue = RowValue
 
     var title: String
@@ -118,7 +118,7 @@ struct TableColumn_<RowValue, Content>: TableColumnContent_, Identifiable where 
 
     var outputs: [TableColumnOutput<RowValue>] {
         [
-            TableColumnOutput(title: title) { value in
+            TableColumnOutput(id: id, title: title) { value in
                 AnyView(
                     HStack {
                         content(value)
@@ -131,6 +131,25 @@ struct TableColumn_<RowValue, Content>: TableColumnContent_, Identifiable where 
 
     func makeBody(_ value: RowValue) -> Content {
         content(value)
+    }
+
+    func makeCellView(_ value: RowValue, tableView: NSTableView, tableColumn: NSTableColumn) -> NSView? {
+        guard id == UUID(uuidString: tableColumn.identifier.rawValue) else {
+            return nil
+        }
+
+        let body = makeBody(value)
+
+        let cellView: TableHostCell_<Content>
+        if let v = tableView.makeView(withIdentifier: tableColumn.identifier, owner: nil) as? TableHostCell_<Content> {
+            cellView = v
+            cellView.setRootView(body)
+        } else {
+            cellView = TableHostCell_(body)
+            cellView.identifier = tableColumn.identifier
+        }
+
+        return cellView
     }
 }
 
@@ -167,6 +186,11 @@ struct TupleTableColumnContent2<RowValue, C0, C1>: TableColumnContent_ where Row
         content.0.makeBody(value)
         content.1.makeBody(value)
     }
+
+    func makeCellView(_ value: RowValue, tableView: NSTableView, tableColumn: NSTableColumn) -> NSView? {
+        content.0.makeCellView(value, tableView: tableView, tableColumn: tableColumn) ??
+        content.1.makeCellView(value, tableView: tableView, tableColumn: tableColumn)
+    }
 }
 
 struct TupleTableColumnContent3<RowValue, C0, C1, C2>: TableColumnContent_ where RowValue: Identifiable, RowValue == C0.TableRowValue, C0: TableColumnContent_, C1: TableColumnContent_, C2: TableColumnContent_, C0.TableRowValue == C1.TableRowValue, C1.TableRowValue == C2.TableRowValue{
@@ -190,6 +214,12 @@ struct TupleTableColumnContent3<RowValue, C0, C1, C2>: TableColumnContent_ where
         content.0.makeBody(value)
         content.1.makeBody(value)
         content.2.makeBody(value)
+    }
+
+    func makeCellView(_ value: RowValue, tableView: NSTableView, tableColumn: NSTableColumn) -> NSView? {
+        content.0.makeCellView(value, tableView: tableView, tableColumn: tableColumn) ??
+        content.1.makeCellView(value, tableView: tableView, tableColumn: tableColumn) ??
+        content.2.makeCellView(value, tableView: tableView, tableColumn: tableColumn)
     }
 }
 
@@ -215,6 +245,13 @@ struct TupleTableColumnContent4<RowValue, C0, C1, C2, C3>: TableColumnContent_ w
         content.1.makeBody(value)
         content.2.makeBody(value)
         content.3.makeBody(value)
+    }
+
+    func makeCellView(_ value: RowValue, tableView: NSTableView, tableColumn: NSTableColumn) -> NSView? {
+        content.0.makeCellView(value, tableView: tableView, tableColumn: tableColumn) ??
+        content.1.makeCellView(value, tableView: tableView, tableColumn: tableColumn) ??
+        content.2.makeCellView(value, tableView: tableView, tableColumn: tableColumn) ??
+        content.3.makeCellView(value, tableView: tableView, tableColumn: tableColumn)
     }
 }
 
@@ -370,11 +407,22 @@ struct TupleTableRowContent4<Value, C0, C1, C2, C3>: TableRowContent_ where Valu
 //    }
 //}
 
-class TableHostCell_: NSTableCellView {
-    var hostingView: NSHostingView<AnyView>
+struct TableCellModifier_: ViewModifier {
+    func body(content: Content) -> some View {
+        content.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+    }
+}
 
-    init(_ content: AnyView) {
-        hostingView = NSHostingView(rootView: content)
+class TableHostCell_<Content>: NSTableCellView where Content: View {
+    var hostingView: NSHostingView<ModifiedContent<Content, TableCellModifier_>>
+
+
+    func setRootView(_ rootView: Content) {
+        hostingView.rootView = rootView.modifier(TableCellModifier_())
+    }
+
+    init(_ content: Content) {
+        hostingView = NSHostingView(rootView: content.modifier(TableCellModifier_()))
         hostingView.translatesAutoresizingMaskIntoConstraints = false
         super.init(frame: .zero)
         addSubview(hostingView)
@@ -390,12 +438,12 @@ class TableHostCell_: NSTableCellView {
     }
 }
 
-struct TableConfiguration<Value> where Value: Identifiable {
-    var columns: [TableColumnOutput<Value>]
+struct TableConfiguration<Value, Columns> where Value: Identifiable, Columns: TableColumnContent_, Value == Columns.TableRowValue {
+    var columns: Columns
     var rows: [Value]
 
-    func column(for id: UUID) -> TableColumnOutput<Value>? {
-        columns.first(where: { $0.id == id })
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn, row: Int) -> NSView? {
+        columns.makeCellView(rows[row], tableView: tableView, tableColumn: tableColumn)
     }
 
     var rowCount: Int {
@@ -403,13 +451,13 @@ struct TableConfiguration<Value> where Value: Identifiable {
     }
 }
 
-struct TableRepresentable<Value>: NSViewRepresentable where Value: Identifiable {
-    var configuration: TableConfiguration<Value>
+struct TableRepresentable<Value, Columns>: NSViewRepresentable where Value: Identifiable, Columns: TableColumnContent_, Value == Columns.TableRowValue {
+    var configuration: TableConfiguration<Value, Columns>
 
     class Coordinator: NSObject, NSTableViewDelegate, NSTableViewDataSource {
-        var configuration: TableConfiguration<Value>
+        var configuration: TableConfiguration<Value, Columns>
 
-        init(configuration: TableConfiguration<Value>) {
+        init(configuration: TableConfiguration<Value, Columns>) {
             self.configuration = configuration
         }
 
@@ -422,24 +470,7 @@ struct TableRepresentable<Value>: NSViewRepresentable where Value: Identifiable 
                 return nil
             }
 
-            guard let columnId = UUID(uuidString: tableColumn.identifier.rawValue) else {
-                return nil
-            }
-
-            guard let column = configuration.column(for: columnId) else {
-                return nil
-            }
-
-            let cellView: TableHostCell_
-            if let v = tableView.makeView(withIdentifier: tableColumn.identifier, owner: self) as? TableHostCell_ {
-                cellView = v
-            } else {
-                cellView = TableHostCell_(AnyView(EmptyView()))
-            }
-
-            cellView.hostingView.rootView = column.makeBody(configuration.rows[row])
-
-            return cellView
+            return configuration.tableView(tableView, viewFor: tableColumn, row: row)
         }
     }
 
@@ -451,7 +482,7 @@ struct TableRepresentable<Value>: NSViewRepresentable where Value: Identifiable 
         let tableView = NSTableView()
         tableView.usesAlternatingRowBackgroundColors = true
 
-        for column in configuration.columns {
+        for column in configuration.columns.outputs {
             let tableColumn = NSTableColumn(identifier: .init(column.id.uuidString))
             tableColumn.title = column.title
             tableView.addTableColumn(tableColumn)
@@ -480,7 +511,7 @@ struct Table_<Value, Rows, Columns>: View where Value == Rows.TableRowValue, Row
     }
 
     var body: some View {
-        TableRepresentable(configuration: TableConfiguration(columns: columns.outputs, rows: rows.values))
+        TableRepresentable(configuration: TableConfiguration(columns: columns, rows: rows.values))
     }
 }
 
