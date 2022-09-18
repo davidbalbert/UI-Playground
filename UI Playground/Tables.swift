@@ -383,35 +383,21 @@ class TableHostCell_<Content>: NSTableCellView where Content: View {
     }
 }
 
-struct TableConfiguration<Value, Columns> where Value: Identifiable, Columns: TableColumnContent_, Value == Columns.TableRowValue {
+struct TableRepresentable<Value, Columns>: NSViewRepresentable where Value: Identifiable, Columns: TableColumnContent_, Value == Columns.TableRowValue {
     var columns: Columns
     var rows: [Value]
 
-    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn, row: Int) -> NSView? {
-        columns.makeCellView(rows[row], tableView: tableView, tableColumn: tableColumn)
-    }
-
-    func makeNSTableColumns(_ tableView: NSTableView) {
-        columns.addNSTableColumns(to: tableView)
-    }
-
-    var rowCount: Int {
-        rows.count
-    }
-}
-
-struct TableRepresentable<Value, Columns>: NSViewRepresentable where Value: Identifiable, Columns: TableColumnContent_, Value == Columns.TableRowValue {
-    var configuration: TableConfiguration<Value, Columns>
-
     class Coordinator: NSObject, NSTableViewDelegate, NSTableViewDataSource {
-        var configuration: TableConfiguration<Value, Columns>
+        var columns: Columns
+        var rows: [Value]
 
-        init(configuration: TableConfiguration<Value, Columns>) {
-            self.configuration = configuration
+        init(columns: Columns, rows: [Value]) {
+            self.columns = columns
+            self.rows = rows
         }
 
         func numberOfRows(in tableView: NSTableView) -> Int {
-            configuration.rowCount
+            rows.count
         }
 
         func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
@@ -419,7 +405,7 @@ struct TableRepresentable<Value, Columns>: NSViewRepresentable where Value: Iden
                 return nil
             }
 
-            return configuration.tableView(tableView, viewFor: tableColumn, row: row)
+            return columns.makeCellView(rows[row], tableView: tableView, tableColumn: tableColumn)
         }
 
         func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
@@ -428,7 +414,7 @@ struct TableRepresentable<Value, Columns>: NSViewRepresentable where Value: Iden
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(configuration: configuration)
+        Coordinator(columns: columns, rows: rows)
     }
 
     func makeNSView(context: Context) -> NSScrollView {
@@ -436,7 +422,7 @@ struct TableRepresentable<Value, Columns>: NSViewRepresentable where Value: Iden
         tableView.usesAlternatingRowBackgroundColors = true
         tableView.allowsColumnReordering = false
 
-        configuration.makeNSTableColumns(tableView)
+        columns.addNSTableColumns(to: tableView)
 
         tableView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
         tableView.delegate = context.coordinator
@@ -462,7 +448,7 @@ struct Table_<Value, Rows, Columns>: View where Value == Rows.TableRowValue, Row
     }
 
     var body: some View {
-        TableRepresentable(configuration: TableConfiguration(columns: columns, rows: rows.values))
+        TableRepresentable(columns: columns, rows: rows.values)
     }
 }
 
