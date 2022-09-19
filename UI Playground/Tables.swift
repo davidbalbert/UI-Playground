@@ -253,7 +253,8 @@ struct TupleTableColumnContent4<RowValue, C0, C1, C2, C3>: TableColumnContent_ w
 
 protocol TableRowContent_ {
     associatedtype TableRowValue: Identifiable
-    var values: [TableRowValue] { get }
+    associatedtype Values: RandomAccessCollection where Values.Element == TableRowValue
+    var values: Values { get }
     var count: Int { get }
 }
 
@@ -286,7 +287,7 @@ struct TupleTableRowContent2<Value, C0, C1>: TableRowContent_ where Value: Ident
     }
 
     var values: [Value] {
-        content.0.values + content.1.values
+        Array(content.0.values) + Array(content.1.values)
     }
 
     var count: Int {
@@ -305,7 +306,7 @@ struct TupleTableRowContent3<Value, C0, C1, C2>: TableRowContent_ where Value: I
     }
 
     var values: [Value] {
-        content.0.values + content.1.values + content.2.values
+        Array(content.0.values) + Array(content.1.values) + Array(content.2.values)
     }
 
     var count: Int {
@@ -324,7 +325,7 @@ struct TupleTableRowContent4<Value, C0, C1, C2, C3>: TableRowContent_ where Valu
     }
 
     var values: [Value] {
-        content.0.values + content.1.values + content.2.values + content.3.values
+        Array(content.0.values) + Array(content.1.values) + Array(content.2.values) + Array(content.3.values)
     }
 
     var count: Int {
@@ -393,7 +394,7 @@ struct TableRepresentable<Value, Rows, Columns>: NSViewRepresentable where Value
 
     class Coordinator: NSObject, NSTableViewDelegate {
         var columns: Columns
-        var rows: [Value] {
+        var values: Rows.Values {
             didSet {
                 rowsChanged()
             }
@@ -401,9 +402,9 @@ struct TableRepresentable<Value, Rows, Columns>: NSViewRepresentable where Value
 
         var dataSource: NSTableViewDiffableDataSource<Section, Value.ID>!
 
-        init(columns: Columns, rows: [Value]) {
+        init(columns: Columns, values: Rows.Values) {
             self.columns = columns
-            self.rows = rows
+            self.values = values
         }
 
         func configureDataSource(_ tableView: NSTableView) {
@@ -412,7 +413,8 @@ struct TableRepresentable<Value, Rows, Columns>: NSViewRepresentable where Value
                     return NSView()
                 }
 
-                let value = self.rows[row]
+                let idx = self.values.index(self.values.startIndex, offsetBy: row)
+                let value = self.values[idx]
                 assert(value.id == identifier)
 
                 return self.columns.makeCellView(value, tableView: tableView, tableColumn: tableColumn) ?? NSView()
@@ -424,7 +426,7 @@ struct TableRepresentable<Value, Rows, Columns>: NSViewRepresentable where Value
         func rowsChanged() {
             var snapshot = NSDiffableDataSourceSnapshot<Section, Value.ID>()
             snapshot.appendSections([.main])
-            snapshot.appendItems(rows.map(\.id))
+            snapshot.appendItems(values.map(\.id))
             dataSource.apply(snapshot, animatingDifferences: true)
         }
 
@@ -434,7 +436,7 @@ struct TableRepresentable<Value, Rows, Columns>: NSViewRepresentable where Value
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(columns: columns, rows: rows.values)
+        Coordinator(columns: columns, values: rows.values)
     }
 
     func makeNSView(context: Context) -> NSScrollView {
@@ -457,7 +459,7 @@ struct TableRepresentable<Value, Rows, Columns>: NSViewRepresentable where Value
     func updateNSView(_ nsView: NSScrollView, context: Context) {
         // TODO: make sure adding and removing rows works, deal with editing the contents of a row
         context.coordinator.columns = columns
-        context.coordinator.rows = rows.values
+        context.coordinator.values = rows.values
     }
 }
 
