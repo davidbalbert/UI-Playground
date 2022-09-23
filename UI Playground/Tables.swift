@@ -88,13 +88,13 @@ protocol TableColumnContent_ {
     func addNSTableColumns(to tableView: NSTableView)
 }
 
-struct TableColumn_<RowValue, Content>: TableColumnContent_, Identifiable where RowValue: Identifiable, Content: View {
+struct TableColumn_<RowValue, Content>: TableColumnContent_ where RowValue: Identifiable, Content: View {
     typealias TableRowValue = RowValue
 
+    var id = UUID()
     var title: String
     var content: (RowValue) -> Content
 
-    var id = UUID()
 
     init(_ title: String, @ViewBuilder content: @escaping (RowValue) -> Content) {
         self.title = title
