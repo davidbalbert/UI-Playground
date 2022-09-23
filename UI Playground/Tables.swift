@@ -276,6 +276,63 @@ struct TableRow_<Value>: TableRowContent_ where Value: Identifiable {
     }
 }
 
+struct EmptyTableRowContent_<Value>: TableRowContent_ where Value: Identifiable {
+    typealias TableRowValue = Value
+
+    var values: [Value] {
+        []
+    }
+
+    var count: Int {
+        0
+    }
+}
+
+struct ForEach_<Data, Content> where Data: RandomAccessCollection, Data.Element: Identifiable {
+
+    var data: Data
+    var content: (Data.Element) -> Content
+
+    init() {
+        fatalError("should not be called")
+    }
+}
+
+extension ForEach_: TableRowContent_ where Content: TableRowContent_, Data.Element == Content.TableRowValue {
+    typealias TableRowValue = Content.TableRowValue
+
+    init(_ data: Data, @TableRowBuilder_<Data.Element> content: @escaping (Data.Element) -> Content) {
+        self.data = data
+        self.content = content
+    }
+
+    var values: [TableRowValue] {
+        data.flatMap { content($0).values }
+    }
+
+    var count: Int {
+        data.count
+    }
+}
+
+struct TableForEachContent_<Data>: TableRowContent_ where Data: RandomAccessCollection, Data.Element: Identifiable {
+    typealias TableRowValue = Data.Element
+
+    var data: Data
+
+    init(_ data: Data) {
+        self.data = data
+    }
+
+    var values: Data {
+        data
+    }
+
+    var count: Int {
+        data.count
+    }
+}
+
 struct TupleTableRowContent2<Value, C0, C1>: TableRowContent_ where Value: Identifiable, Value == C0.TableRowValue, C0: TableRowContent_, C1: TableRowContent_, C0.TableRowValue == C1.TableRowValue {
 
     typealias TableRowValue = Value
@@ -472,6 +529,11 @@ struct Table_<Value, Rows, Columns>: View where Value == Rows.TableRowValue, Row
         self.rows = rows()
     }
 
+    init<Data>(_ data: Data, @TableColumnBuilder_<Value> columns: () -> Columns) where Rows == TableForEachContent_<Data>, Data: RandomAccessCollection, Columns.TableRowValue == Data.Element {
+        self.columns = columns()
+        self.rows = TableForEachContent_(data)
+    }
+
     var body: some View {
         TableRepresentable(columns: columns, rows: rows)
     }
@@ -487,40 +549,28 @@ struct Person: Identifiable {
 }
 
 struct Tables: View {
-    @TableColumnBuilder<Person, Never> var columns: some TableColumnContent {
-        TableColumn("First name", value: \.firstName)
-        TableColumn("Last name", value: \.lastName)
-    }
-
-    var firstNameColumn: TableColumn<Person, Never, Text, Text> {
-        TableColumn("First name", value: \.firstName)
-    }
+    @State var people = [
+        Person(firstName: "David", lastName: "Albert", age: 36),
+        Person(firstName: "Bridget", lastName: "McCarthy", age: 36)
+    ]
 
     var body: some View {
         VStack {
-            let nativeTable = Table {
-                TableColumn("First name", value: \.firstName)
-                TableColumn("Last name", value: \.lastName)
-                TableColumn("Age") { person in
-                    Text("\(person.age)")
-                }
-            } rows: {
-                TableRow(Person(firstName: "David", lastName: "Albert", age: 36))
-                TableRow(Person(firstName: "Bridget", lastName: "McCarthy", age: 36))
-            }
-
-            Table_ {
+            Table_(people) {
                 TableColumn_("First name", value: \.firstName)
                 TableColumn_("Last name", value: \.lastName)
                 TableColumn_("Age") { person in
                     Text("\(person.age)")
                 }
-            } rows: {
-                TableRow_(Person(firstName: "David", lastName: "Albert", age: 36))
-                TableRow_(Person(firstName: "Bridget", lastName: "McCarthy", age: 36))
             }
 
-            nativeTable
+            Table(people) {
+                TableColumn("First name", value: \.firstName)
+                TableColumn("Last name", value: \.lastName)
+                TableColumn("Age") { person in
+                    Text("\(person.age)")
+                }
+            }
         }
         .eraseToAnyView()
     }
