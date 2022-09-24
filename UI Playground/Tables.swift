@@ -448,6 +448,7 @@ struct TableRepresentable<Value, Rows, Columns>: NSViewRepresentable where Value
 
     var columns: Columns
     var rows: Rows
+    var selection: TableSelection<Value>
 
     class Coordinator: NSObject, NSTableViewDelegate {
         var columns: Columns
@@ -456,12 +457,15 @@ struct TableRepresentable<Value, Rows, Columns>: NSViewRepresentable where Value
                 rowsChanged()
             }
         }
+        var selection: TableSelection<Value>
 
         var dataSource: NSTableViewDiffableDataSource<Section, Value.ID>!
+        var shouldSuppressSelectionUpdates = false
 
-        init(columns: Columns, values: Rows.Values) {
+        init(columns: Columns, values: Rows.Values, selection: TableSelection<Value>) {
             self.columns = columns
             self.values = values
+            self.selection = selection
         }
 
         func configureDataSource(_ tableView: NSTableView) {
@@ -488,18 +492,42 @@ struct TableRepresentable<Value, Rows, Columns>: NSViewRepresentable where Value
         }
 
         func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-            return false
+            selection.isSelectable
+        }
+
+        func tableViewSelectionDidChange(_ notification: Notification) {
+            if shouldSuppressSelectionUpdates {
+                return
+            }
+
+            guard let tableView = notification.object as? NSTableView else {
+                return
+            }
+
+            let ids = tableView.selectedRowIndexes.map { row in
+                let idx = values.index(values.startIndex, offsetBy: row)
+                return values[idx].id
+            }
+
+            selection.update(ids)
+        }
+
+        func suppressSelectionUpdates(perform: () -> ()) {
+            shouldSuppressSelectionUpdates = true
+            perform()
+            shouldSuppressSelectionUpdates = false
         }
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(columns: columns, values: rows.values)
+        Coordinator(columns: columns, values: rows.values, selection: selection)
     }
 
     func makeNSView(context: Context) -> NSScrollView {
         let tableView = NSTableView()
         tableView.usesAlternatingRowBackgroundColors = true
         tableView.allowsColumnReordering = false
+        tableView.allowsMultipleSelection = selection.allowsMultipleSelection
 
         columns.addNSTableColumns(to: tableView)
 
@@ -513,29 +541,117 @@ struct TableRepresentable<Value, Rows, Columns>: NSViewRepresentable where Value
         return scrollView
     }
 
-    func updateNSView(_ nsView: NSScrollView, context: Context) {
+    func updateNSView(_ scrollView: NSScrollView, context: Context) {
         // TODO: make sure adding and removing rows works, deal with editing the contents of a row
-        context.coordinator.columns = columns
-        context.coordinator.values = rows.values
+        let values = rows.values
+        context.coordinator.values = values
+        context.coordinator.selection = selection
+
+        guard let tableView = scrollView.documentView as? NSTableView else {
+             return
+        }
+
+        let oldIndexSet = tableView.selectedRowIndexes
+        let newIndexSet = selection.indexSet(in: values)
+
+        if newIndexSet != oldIndexSet {
+            context.coordinator.suppressSelectionUpdates {
+                tableView.selectRowIndexes(newIndexSet, byExtendingSelection: false)
+            }
+        }
+    }
+}
+
+enum TableSelection<Value> where Value: Identifiable {
+    case none
+    case single(Binding<Value.ID?>)
+    case multi(Binding<Set<Value.ID>>)
+
+    var ids: [Value.ID] {
+        switch self {
+        case .none:
+            return []
+        case let .single(binding):
+            return [binding.wrappedValue].compactMap { $0 }
+        case let .multi(binding):
+            return Array(binding.wrappedValue)
+        }
+    }
+
+    var isSelectable: Bool {
+        switch self {
+        case .none:
+            return false
+        default:
+            return true
+        }
+    }
+
+    var allowsMultipleSelection: Bool {
+        switch self {
+        case .multi(_):
+            return true
+        default:
+            return false
+        }
+    }
+
+    func update(_ ids: [Value.ID]) {
+        switch self {
+        case let .single(binding):
+            binding.wrappedValue = ids.first
+        case let .multi(binding):
+            binding.wrappedValue = Set(ids)
+        default:
+            break
+        }
+    }
+
+    func indexSet<Values>(in values: Values) -> IndexSet where Values: RandomAccessCollection, Values.Element == Value {
+
+        let indexes: [Int] = ids.compactMap { id in
+            guard let idx = values.firstIndex(where: { $0.id == id }) else {
+                return nil
+            }
+
+            return values.distance(from: values.startIndex, to: idx)
+        }
+
+        return IndexSet(indexes)
     }
 }
 
 struct Table_<Value, Rows, Columns>: View where Value == Rows.TableRowValue, Rows: TableRowContent_, Columns: TableColumnContent_, Rows.TableRowValue == Columns.TableRowValue {
     var columns: Columns
     var rows: Rows
+    var selection: TableSelection<Value>
 
     init(@TableColumnBuilder_<Value> columns: () -> Columns, @TableRowBuilder_<Value> rows: () -> Rows) {
         self.columns = columns()
         self.rows = rows()
+        self.selection = .none
     }
 
     init<Data>(_ data: Data, @TableColumnBuilder_<Value> columns: () -> Columns) where Rows == TableForEachContent_<Data>, Data: RandomAccessCollection, Columns.TableRowValue == Data.Element {
         self.columns = columns()
         self.rows = TableForEachContent_(data)
+        self.selection = .none
+    }
+
+    init<Data>(_ data: Data, selection: Binding<Value.ID?>, @TableColumnBuilder_<Value> columns: () -> Columns) where Rows == TableForEachContent_<Data>, Data: RandomAccessCollection, Columns.TableRowValue == Data.Element {
+        self.columns = columns()
+        self.rows = TableForEachContent_(data)
+        self.selection = .single(selection)
+    }
+
+    init<Data>(_ data: Data, selection: Binding<Set<Value.ID>>, @TableColumnBuilder_<Value> columns: () -> Columns) where Rows == TableForEachContent_<Data>, Data: RandomAccessCollection, Columns.TableRowValue == Data.Element {
+        self.columns = columns()
+        self.rows = TableForEachContent_(data)
+        self.selection = .multi(selection)
     }
 
     var body: some View {
-        TableRepresentable(columns: columns, rows: rows)
+        TableRepresentable(columns: columns, rows: rows, selection: selection)
     }
 }
 
@@ -554,9 +670,19 @@ struct Tables: View {
         Person(firstName: "Bridget", lastName: "McCarthy", age: 36)
     ]
 
+    @State var selection: Set<Person.ID> = []
+
     var body: some View {
         VStack {
-            Table_(people) {
+            let nativeTable = Table(people, selection: $selection) {
+                TableColumn("First name", value: \.firstName)
+                TableColumn("Last name", value: \.lastName)
+                TableColumn("Age") { person in
+                    Text("\(person.age)")
+                }
+            }
+
+            Table_(people, selection: $selection) {
                 TableColumn_("First name", value: \.firstName)
                 TableColumn_("Last name", value: \.lastName)
                 TableColumn_("Age") { person in
@@ -564,13 +690,7 @@ struct Tables: View {
                 }
             }
 
-            Table(people) {
-                TableColumn("First name", value: \.firstName)
-                TableColumn("Last name", value: \.lastName)
-                TableColumn("Age") { person in
-                    Text("\(person.age)")
-                }
-            }
+            nativeTable
         }
         .eraseToAnyView()
     }
