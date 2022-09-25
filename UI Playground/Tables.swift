@@ -95,7 +95,6 @@ struct TableColumn_<RowValue, Content>: TableColumnContent_ where RowValue: Iden
     var title: String
     var content: (RowValue) -> Content
 
-
     init(_ title: String, @ViewBuilder content: @escaping (RowValue) -> Content) {
         self.title = title
         self.content = content
@@ -115,7 +114,7 @@ struct TableColumn_<RowValue, Content>: TableColumnContent_ where RowValue: Iden
         let cellView: TableHostCell_<Content>
         if let v = tableView.makeView(withIdentifier: tableColumn.identifier, owner: nil) as? TableHostCell_<Content> {
             cellView = v
-            cellView.setRootView(body)
+            cellView.setContent(body)
         } else {
             cellView = TableHostCell_(body)
             cellView.identifier = tableColumn.identifier
@@ -419,11 +418,6 @@ struct TableCellModifier_: ViewModifier {
 class TableHostCell_<Content>: NSTableCellView where Content: View {
     var hostingView: NSHostingView<ModifiedContent<Content, TableCellModifier_>>
 
-
-    func setRootView(_ rootView: Content) {
-        hostingView.rootView = rootView.modifier(TableCellModifier_())
-    }
-
     init(_ content: Content) {
         hostingView = NSHostingView(rootView: content.modifier(TableCellModifier_()))
         hostingView.translatesAutoresizingMaskIntoConstraints = false
@@ -438,6 +432,10 @@ class TableHostCell_<Content>: NSTableCellView where Content: View {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func setContent(_ content: Content) {
+        hostingView.rootView = content.modifier(TableCellModifier_())
     }
 }
 
