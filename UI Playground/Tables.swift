@@ -460,7 +460,7 @@ struct AppKitTable<Value, Rows, Columns>: NSViewRepresentable where Value == Row
         var selection: TableSelection<Value>
 
         var dataSource: NSTableViewDiffableDataSource<Section, Value.ID>!
-        var shouldSuppressSelectionUpdates = false
+        var selectionChangedDueToUserInput = false
 
         init(columns: Columns, values: Rows.Values, selection: TableSelection<Value>) {
             self.columns = columns
@@ -495,10 +495,17 @@ struct AppKitTable<Value, Rows, Columns>: NSViewRepresentable where Value == Row
             selection.isSelectable
         }
 
+        func selectionShouldChange(in tableView: NSTableView) -> Bool {
+            selectionChangedDueToUserInput = true
+            return true
+        }
+
         func tableViewSelectionDidChange(_ notification: Notification) {
-            if shouldSuppressSelectionUpdates {
+            guard selectionChangedDueToUserInput else {
                 return
             }
+
+            selectionChangedDueToUserInput = false
 
             guard let tableView = notification.object as? NSTableView else {
                 return
@@ -510,12 +517,6 @@ struct AppKitTable<Value, Rows, Columns>: NSViewRepresentable where Value == Row
             }
 
             selection.update(ids)
-        }
-
-        func suppressSelectionUpdates(perform: () -> ()) {
-            shouldSuppressSelectionUpdates = true
-            perform()
-            shouldSuppressSelectionUpdates = false
         }
     }
 
@@ -555,9 +556,7 @@ struct AppKitTable<Value, Rows, Columns>: NSViewRepresentable where Value == Row
         let newIndexSet = selection.indexSet(in: values)
 
         if newIndexSet != oldIndexSet {
-            context.coordinator.suppressSelectionUpdates {
-                tableView.selectRowIndexes(newIndexSet, byExtendingSelection: false)
-            }
+            tableView.selectRowIndexes(newIndexSet, byExtendingSelection: false)
         }
     }
 }
