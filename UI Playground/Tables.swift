@@ -441,7 +441,7 @@ class TableHostCell_<Content>: NSTableCellView where Content: View {
     }
 }
 
-struct TableRepresentable<Value, Rows, Columns>: NSViewRepresentable where Value == Rows.TableRowValue, Rows: TableRowContent_, Columns: TableColumnContent_, Rows.TableRowValue == Columns.TableRowValue {
+struct AppKitTable<Value, Rows, Columns>: NSViewRepresentable where Value == Rows.TableRowValue, Rows: TableRowContent_, Columns: TableColumnContent_, Rows.TableRowValue == Columns.TableRowValue {
     enum Section {
         case main
     }
@@ -608,7 +608,6 @@ enum TableSelection<Value> where Value: Identifiable {
     }
 
     func indexSet<Values>(in values: Values) -> IndexSet where Values: RandomAccessCollection, Values.Element == Value {
-
         let indexes: [Int] = ids.compactMap { id in
             guard let idx = values.firstIndex(where: { $0.id == id }) else {
                 return nil
@@ -626,12 +625,32 @@ struct Table_<Value, Rows, Columns>: View where Value == Rows.TableRowValue, Row
     var rows: Rows
     var selection: TableSelection<Value>
 
+    var body: some View {
+        AppKitTable(columns: columns, rows: rows, selection: selection)
+    }
+}
+
+extension Table_ {
     init(@TableColumnBuilder_<Value> columns: () -> Columns, @TableRowBuilder_<Value> rows: () -> Rows) {
         self.columns = columns()
         self.rows = rows()
         self.selection = .none
     }
 
+    init(selection: Binding<Value.ID?>, @TableColumnBuilder_<Value> columns: () -> Columns, @TableRowBuilder_<Value> rows: () -> Rows) {
+        self.columns = columns()
+        self.rows = rows()
+        self.selection = .single(selection)
+    }
+
+    init(selection: Binding<Set<Value.ID>>, @TableColumnBuilder_<Value> columns: () -> Columns, @TableRowBuilder_<Value> rows: () -> Rows) {
+        self.columns = columns()
+        self.rows = rows()
+        self.selection = .multi(selection)
+    }
+}
+
+extension Table_ {
     init<Data>(_ data: Data, @TableColumnBuilder_<Value> columns: () -> Columns) where Rows == TableForEachContent_<Data>, Data: RandomAccessCollection, Columns.TableRowValue == Data.Element {
         self.columns = columns()
         self.rows = TableForEachContent_(data)
@@ -648,10 +667,6 @@ struct Table_<Value, Rows, Columns>: View where Value == Rows.TableRowValue, Row
         self.columns = columns()
         self.rows = TableForEachContent_(data)
         self.selection = .multi(selection)
-    }
-
-    var body: some View {
-        TableRepresentable(columns: columns, rows: rows, selection: selection)
     }
 }
 
