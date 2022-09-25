@@ -491,13 +491,9 @@ struct AppKitTable<Value, Rows, Columns>: NSViewRepresentable where Value == Row
             dataSource.apply(snapshot, animatingDifferences: true)
         }
 
-        func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-            selection.isSelectable
-        }
-
         func selectionShouldChange(in tableView: NSTableView) -> Bool {
             selectionChangedDueToUserInput = true
-            return true
+            return selection.isSelectable
         }
 
         func tableViewSelectionDidChange(_ notification: Notification) {
