@@ -452,7 +452,7 @@ struct AppKitTable<Value, Rows, Columns>: NSViewRepresentable where Value == Row
         var columns: Columns
         var values: Rows.Values {
             didSet {
-                rowsChanged()
+                rowsChanged(firstLoad: false)
             }
         }
         var selection: TableSelection<Value>
@@ -479,14 +479,14 @@ struct AppKitTable<Value, Rows, Columns>: NSViewRepresentable where Value == Row
                 return self.columns.makeCellView(value, tableView: tableView, tableColumn: tableColumn) ?? NSView()
             }
 
-            rowsChanged()
+            rowsChanged(firstLoad: true)
         }
 
-        func rowsChanged() {
+        func rowsChanged(firstLoad: Bool) {
             var snapshot = NSDiffableDataSourceSnapshot<Section, Value.ID>()
             snapshot.appendSections([.main])
             snapshot.appendItems(values.map(\.id))
-            dataSource.apply(snapshot, animatingDifferences: true)
+            dataSource.apply(snapshot, animatingDifferences: firstLoad)
         }
 
         func selectionShouldChange(in tableView: NSTableView) -> Bool {
@@ -681,7 +681,7 @@ struct Tables: View {
     @State var selection: Set<Person.ID> = []
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             let nativeTable = Table(people, selection: $selection) {
                 TableColumn("First name", value: \.firstName)
                 TableColumn("Last name", value: \.lastName)
