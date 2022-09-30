@@ -42,10 +42,10 @@ struct Ball {
     mutating func drag(to point: CGPoint, timestamp: Date) {
         if let lastDraggedAt {
             let dt = timestamp.distance(to: lastDraggedAt)
-            let dx = (point.x-center.x) * metersPerPoint
-            let dy = (point.y-center.y) * metersPerPoint
+            let dx = -(point.x-center.x) * metersPerPoint
+            let dy = -(point.y-center.y) * metersPerPoint
 
-            velocity = CGVector(dx: -dx/dt, dy: -dy/dt)
+            velocity = CGVector(dx: dx/dt, dy: dy/dt)
         } else {
             velocity = .zero
         }
@@ -74,18 +74,22 @@ class World: ObservableObject {
 
         if ball.frame.minY <= 0 {
             ball.velocity.dy *= -1 * 0.8
+            ball.velocity.dx *= 0.98 // friction
         }
 
         if ball.frame.maxY >= size.height {
             ball.velocity.dy *= -1 * 0.8
+            ball.velocity.dx *= 0.98 // friction
         }
 
         if ball.frame.minX <= 0 {
             ball.velocity.dx *= -1 * 0.8
+            ball.velocity.dx *= 0.98 // friction
         }
 
         if ball.frame.maxX >= size.width {
             ball.velocity.dx *= -1 * 0.8
+            ball.velocity.dx *= 0.98 // friction
         }
 
         let g = 9.8 // m/s^2; down is positive in SwiftUI
