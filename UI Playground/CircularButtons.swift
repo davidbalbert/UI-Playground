@@ -7,14 +7,6 @@
 
 import SwiftUI
 
-struct SizeKey: PreferenceKey {
-    static var defaultValue: CGSize? = nil
-
-    static func reduce(value: inout CGSize?, nextValue: () -> CGSize?) {
-        value = value ?? nextValue()
-    }
-}
-
 struct CircularButtonStyle: ButtonStyle {
     @State var textSize: CGSize?
     @Environment(\.circularButtonColor) var color
@@ -34,12 +26,7 @@ struct CircularButtonStyle: ButtonStyle {
 
             configuration.label
                 .padding()
-                .overlay {
-                    GeometryReader { proxy in
-                        Color.clear.preference(key: SizeKey.self, value: proxy.size)
-                    }
-                }
-                .onPreferenceChange(SizeKey.self) { size in
+                .onSizeChange { size in
                     textSize = size
                 }
         }

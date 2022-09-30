@@ -37,7 +37,7 @@ struct RootView: View {
                     NavigationLink("Button Style", destination: ButtonStyleExperiments())
                 }
 
-                Section("20 Sketches") {
+                Section("Sketches") {
                     Group {
                         NavigationLink("Loading Indicator", destination: LoadingIndicator())
                         NavigationLink("Fabric", destination: FabricEffect())
@@ -55,6 +55,7 @@ struct RootView: View {
                         NavigationLink("Custom Knob Slider", destination: CustomKnobSliders())
                         NavigationLink("Metaballs", destination: Metaballs())
                         NavigationLink("Icon Morph", destination: IconMorph())
+                        NavigationLink("Bouncing Ball Physics", destination: BouncingBall())
                     }
                 }
             }
