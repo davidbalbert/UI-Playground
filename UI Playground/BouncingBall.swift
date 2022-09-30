@@ -45,7 +45,7 @@ struct Ball {
             let dx = -(point.x-center.x) * metersPerPoint
             let dy = -(point.y-center.y) * metersPerPoint
 
-            velocity = CGVector(dx: dx/dt, dy: dy/dt)
+            velocity = CGVector(dx: (dx/dt).clamped(to: -10...10), dy: (dy/dt).clamped(to: -10...10))
         } else {
             velocity = .zero
         }
@@ -74,22 +74,22 @@ class World: ObservableObject {
 
         if ball.frame.minY <= 0 {
             ball.velocity.dy *= -1 * 0.8
-            ball.velocity.dx *= 0.98 // friction
+            ball.velocity.dx *= 0.97 // friction
         }
 
         if ball.frame.maxY >= size.height {
             ball.velocity.dy *= -1 * 0.8
-            ball.velocity.dx *= 0.98 // friction
+            ball.velocity.dx *= 0.97 // friction
         }
 
         if ball.frame.minX <= 0 {
             ball.velocity.dx *= -1 * 0.8
-            ball.velocity.dx *= 0.98 // friction
+            ball.velocity.dx *= 0.97 // friction
         }
 
         if ball.frame.maxX >= size.width {
             ball.velocity.dx *= -1 * 0.8
-            ball.velocity.dx *= 0.98 // friction
+            ball.velocity.dx *= 0.97 // friction
         }
 
         let g = 9.8 // m/s^2; down is positive in SwiftUI
