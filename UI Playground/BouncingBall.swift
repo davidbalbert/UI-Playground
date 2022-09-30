@@ -9,6 +9,7 @@ import SwiftUI
 
 class Ball: ObservableObject {
     @Published var center: CGPoint = .zero
+    @Published var canvasSize: CGSize?
 
     var r: Double {
         25
@@ -21,7 +22,6 @@ class Ball: ObservableObject {
     var frame: CGRect {
         CGRect(origin: CGPoint(x: center.x-r, y: center.y-r), size: size)
     }
-
 
     var metersPerPoint: Double {
         // A basketball has a diameter of 0.24 m
@@ -40,15 +40,26 @@ class Ball: ObservableObject {
     var velocity: CGVector = .zero
 
     func update(_ dt: TimeInterval) {
+        guard let canvasSize, canvasSize != .zero else { return }
+
         if dragged {
             dragged = false
             return
         }
 
+        if frame.maxY >= canvasSize.height {
+            velocity.dy *= -1 * 0.8
+        }
+
         let g = 9.8 // m/s^2; down is positive in SwiftUI
 
         velocity.dy += g*dt
+
+        position.x += velocity.dx * dt
         position.y += velocity.dy * dt
+
+        center.x = center.x.clamped(to: r...canvasSize.width-r)
+        center.y = center.y.clamped(to: r...canvasSize.height-r)
     }
 
     var dragged = false
@@ -60,9 +71,11 @@ class Ball: ObservableObject {
     }
 }
 
-struct BouncingBall: View {
-    @State var canvasSize: CGSize?
+class World: ObservableObject {
+    @Published var size: CGSize?
+}
 
+struct BouncingBall: View {
     @StateObject var ball = Ball()
 
     @State var dragging = false
@@ -80,9 +93,9 @@ struct BouncingBall: View {
     }
 
     var isAnimating: Bool {
-        guard let canvasSize else { return false }
+        guard let canvasSize = ball.canvasSize else { return false }
 
-        return !dragging && ball.frame.maxY <= canvasSize.height
+        return !dragging /* && ball.frame.maxY <= canvasSize.height*/
     }
 
     var body: some View {
@@ -100,11 +113,11 @@ struct BouncingBall: View {
                 .onSizeChange { size in
                     guard let size else { return }
 
-                    if canvasSize == nil {
+                    if ball.canvasSize == nil {
                         ball.center = CGPoint(x: size.width/2, y: size.height/2)
                     }
 
-                    canvasSize = size
+                    ball.canvasSize = size
                 }
                 .onChange(of: t as TimeInterval) { [t] newT in
                     ball.update(newT - t)
