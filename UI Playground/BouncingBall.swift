@@ -73,22 +73,22 @@ class World: ObservableObject {
         guard !ball.isDragged else { return }
 
         if ball.frame.minY <= 0 {
-            ball.velocity.dy *= -1 * 0.8
+            ball.velocity.dy *= -1 * 0.75
             ball.velocity.dx *= 0.97 // friction
         }
 
         if ball.frame.maxY >= size.height {
-            ball.velocity.dy *= -1 * 0.8
+            ball.velocity.dy *= -1 * 0.75
             ball.velocity.dx *= 0.97 // friction
         }
 
         if ball.frame.minX <= 0 {
-            ball.velocity.dx *= -1 * 0.8
+            ball.velocity.dx *= -1 * 0.75
             ball.velocity.dx *= 0.97 // friction
         }
 
         if ball.frame.maxX >= size.width {
-            ball.velocity.dx *= -1 * 0.8
+            ball.velocity.dx *= -1 * 0.75
             ball.velocity.dx *= 0.97 // friction
         }
 
