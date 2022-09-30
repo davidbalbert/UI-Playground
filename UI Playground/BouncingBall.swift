@@ -9,7 +9,7 @@ import SwiftUI
 
 struct Ball {
     var center: CGPoint = .zero
-    var isDragged = false
+    var lastDraggedAt: Date?
 
     var r: Double {
         25
@@ -39,16 +39,27 @@ struct Ball {
 
     var velocity: CGVector = .zero
 
-    mutating func drag(to point: CGPoint) {
+    mutating func drag(to point: CGPoint, timestamp: Date) {
+        if let lastDraggedAt {
+            let dt = timestamp.distance(to: lastDraggedAt)
+            let dx = (point.x-center.x) * metersPerPoint
+            let dy = (point.y-center.y) * metersPerPoint
+
+            velocity = CGVector(dx: -dx/dt, dy: -dy/dt)
+        } else {
+            velocity = .zero
+        }
+
         center = point
-        velocity = .zero
-        isDragged = true
+        lastDraggedAt = timestamp
     }
 
-    mutating func endDrag(to point: CGPoint) {
-        center = point
-        velocity = .zero
-        isDragged = false
+    mutating func endDrag() {
+        lastDraggedAt = nil
+    }
+
+    var isDragged: Bool {
+        lastDraggedAt != nil
     }
 }
 
@@ -61,8 +72,20 @@ class World: ObservableObject {
         guard let size, size != .zero else { return }
         guard !ball.isDragged else { return }
 
+        if ball.frame.minY <= 0 {
+            ball.velocity.dy *= -1 * 0.8
+        }
+
         if ball.frame.maxY >= size.height {
             ball.velocity.dy *= -1 * 0.8
+        }
+
+        if ball.frame.minX <= 0 {
+            ball.velocity.dx *= -1 * 0.8
+        }
+
+        if ball.frame.maxX >= size.width {
+            ball.velocity.dx *= -1 * 0.8
         }
 
         let g = 9.8 // m/s^2; down is positive in SwiftUI
@@ -81,12 +104,12 @@ struct BallView: View {
     @Binding var ball: Ball
 
     var dragGesture: some Gesture {
-        DragGesture(coordinateSpace: .named("canvas"))
+        DragGesture(minimumDistance: 0, coordinateSpace: .named("canvas"))
             .onChanged { value in
-                ball.drag(to: value.location)
+                ball.drag(to: value.location, timestamp: .now)
             }
             .onEnded { value in
-                ball.endDrag(to: value.location)
+                ball.endDrag()
             }
     }
 
