@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-class Ball: ObservableObject {
-    @Published var center: CGPoint = .zero
-    @Published var canvasSize: CGSize?
+struct Ball {
+    var center: CGPoint = .zero
+    var isDragged = false
 
     var r: Double {
         25
@@ -39,88 +39,88 @@ class Ball: ObservableObject {
 
     var velocity: CGVector = .zero
 
+    mutating func drag(to point: CGPoint) {
+        center = point
+        velocity = .zero
+        isDragged = true
+    }
+
+    mutating func endDrag(to point: CGPoint) {
+        center = point
+        velocity = .zero
+        isDragged = false
+    }
+}
+
+
+class World: ObservableObject {
+    @Published var size: CGSize?
+    @Published var ball: Ball = Ball()
+
     func update(_ dt: TimeInterval) {
-        guard let canvasSize, canvasSize != .zero else { return }
+        guard let size, size != .zero else { return }
+        guard !ball.isDragged else { return }
 
-        if dragged {
-            dragged = false
-            return
-        }
-
-        if frame.maxY >= canvasSize.height {
-            velocity.dy *= -1 * 0.8
+        if ball.frame.maxY >= size.height {
+            ball.velocity.dy *= -1 * 0.8
         }
 
         let g = 9.8 // m/s^2; down is positive in SwiftUI
 
-        velocity.dy += g*dt
+        ball.velocity.dy += g*dt
 
-        position.x += velocity.dx * dt
-        position.y += velocity.dy * dt
+        ball.position.x += ball.velocity.dx * dt
+        ball.position.y += ball.velocity.dy * dt
 
-        center.x = center.x.clamped(to: r...canvasSize.width-r)
-        center.y = center.y.clamped(to: r...canvasSize.height-r)
-    }
-
-    var dragged = false
-
-    func drag(to point: CGPoint) {
-        center = point
-        velocity = .zero
-        dragged = true
+        ball.center.x = ball.center.x.clamped(to: ball.r...size.width-ball.r)
+        ball.center.y = ball.center.y.clamped(to: ball.r...size.height-ball.r)
     }
 }
 
-class World: ObservableObject {
-    @Published var size: CGSize?
-}
-
-struct BouncingBall: View {
-    @StateObject var ball = Ball()
-
-    @State var dragging = false
+struct BallView: View {
+    @Binding var ball: Ball
 
     var dragGesture: some Gesture {
         DragGesture(coordinateSpace: .named("canvas"))
             .onChanged { value in
-                dragging = true
                 ball.drag(to: value.location)
             }
             .onEnded { value in
-                dragging = false
-                ball.drag(to: value.location)
+                ball.endDrag(to: value.location)
             }
     }
 
-    var isAnimating: Bool {
-        guard let canvasSize = ball.canvasSize else { return false }
-
-        return !dragging /* && ball.frame.maxY <= canvasSize.height*/
+    var body: some View {
+        Circle()
+            .fill(.white)
+            .frame(width: ball.size.width, height: ball.size.height)
+            .position(ball.center)
+            .gesture(dragGesture)
     }
+}
+
+struct BouncingBall: View {
+    @StateObject var world = World()
 
     var body: some View {
-        TimelineView(.animation(paused: !isAnimating)) { context in
+        TimelineView(.animation) { context in
             let t = context.date.timeIntervalSinceReferenceDate
 
-            Circle()
-                .fill(.white)
-                .frame(width: ball.size.width, height: ball.size.height)
-                .position(ball.center)
-                .gesture(dragGesture)
+            BallView(ball: $world.ball)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(.black)
                 .coordinateSpace(name: "canvas")
                 .onSizeChange { size in
                     guard let size else { return }
 
-                    if ball.canvasSize == nil {
-                        ball.center = CGPoint(x: size.width/2, y: size.height/2)
+                    if world.size == nil {
+                        world.ball.center = CGPoint(x: size.width/2, y: size.height/2)
                     }
 
-                    ball.canvasSize = size
+                    world.size = size
                 }
                 .onChange(of: t as TimeInterval) { [t] newT in
-                    ball.update(newT - t)
+                    world.update(newT - t)
                 }
         }
         .eraseToAnyView()
