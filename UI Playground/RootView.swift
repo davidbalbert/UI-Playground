@@ -55,6 +55,7 @@ struct RootView: View {
                         NavigationLink("Custom Knob Slider", destination: CustomKnobSliders())
                         NavigationLink("Metaballs", destination: Metaballs())
                         NavigationLink("Icon Morph", destination: IconMorph())
+                        NavigationLink("Collision Detection", destination: CollisionDetection())
                         NavigationLink("Physics Simulation", destination: PhysicsSimulation())
                         NavigationLink("Bouncing Ball Physics", destination: BouncingBall())
                     }

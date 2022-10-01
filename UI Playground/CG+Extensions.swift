@@ -23,6 +23,10 @@ extension CGPoint {
     static func -(_ a: CGPoint, _ b: CGPoint) -> CGPoint {
         CGPoint(x: a.x-b.x, y: a.y-b.y)
     }
+
+    var rounded: CGPoint {
+        CGPoint(x: x.rounded(), y: y.rounded())
+    }
 }
 
 extension CGSize {
@@ -32,5 +36,15 @@ extension CGSize {
 
     static func /(_ a: CGSize, _ b: CGFloat) -> CGSize {
         CGSize(width: a.width / b, height: a.height / b)
+    }
+}
+
+extension CGVector {
+    init(_ point: CGPoint) {
+        self.init(dx: point.x, dy: point.y)
+    }
+
+    var magnitude: Double {
+        sqrt(pow(dx, 2) + pow(dy, 2))
     }
 }
