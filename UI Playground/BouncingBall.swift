@@ -64,7 +64,7 @@ struct Ball {
 }
 
 
-class World: ObservableObject {
+fileprivate class World: ObservableObject {
     @Published var size: CGSize?
     @Published var ball: Ball = Ball()
 
@@ -127,7 +127,7 @@ struct BallView: View {
 }
 
 struct BouncingBall: View {
-    @StateObject var world = World()
+    @StateObject fileprivate var world = World()
 
     var body: some View {
         TimelineView(.animation) { context in
