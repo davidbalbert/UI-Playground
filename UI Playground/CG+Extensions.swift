@@ -40,11 +40,23 @@ extension CGSize {
 }
 
 extension CGVector {
+    static func +(_ a: CGVector, _ b: CGVector) -> CGVector {
+        CGVector(dx: a.dx+b.dx, dy: a.dy+b.dy)
+    }
+
+    static func -(_ a: CGVector, _ b: CGVector) -> CGVector {
+        CGVector(dx: a.dx-b.dx, dy: a.dy-b.dy)
+    }
+
     init(_ point: CGPoint) {
         self.init(dx: point.x, dy: point.y)
     }
 
     var magnitude: Double {
         sqrt(pow(dx, 2) + pow(dy, 2))
+    }
+
+    func dotProduct(_ other: CGVector) -> Double {
+        dx*other.dx + dy*other.dy
     }
 }

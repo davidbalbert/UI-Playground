@@ -22,51 +22,59 @@ struct RotatedRect: Identifiable {
         size.height
     }
 
-    // Verticies, clockwise with v0 == origin
+    var verticies: [CGVector] {
+        let c = CGVector(center)
 
-    var v0: CGPoint {
-        rotate(point: CGPoint(x: center.x-width/2, y: center.y-height/2))
+        return [
+            CGVector(dx: center.x-width/2, dy: center.y-height/2).rotated(by: angle, around: c),
+            CGVector(dx: center.x+width/2, dy: center.y-height/2).rotated(by: angle, around: c),
+            CGVector(dx: center.x+width/2, dy: center.y+height/2).rotated(by: angle, around: c),
+            CGVector(dx: center.x-width/2, dy: center.y+height/2).rotated(by: angle, around: c)
+        ]
     }
 
-    var v1: CGPoint {
-        rotate(point: CGPoint(x: center.x+width/2, y: center.y-height/2))
-    }
+    var axes: [CGVector] {
+        let x = CGVector(dx: 1, dy: 0)
+        let y = CGVector(dx: 0, dy: 1)
 
-    var v2: CGPoint {
-        rotate(point: CGPoint(x: center.x+width/2, y: center.y+height/2))
-    }
-
-    var v3: CGPoint {
-        rotate(point: CGPoint(x: center.x-width/2, y: center.y+height/2))
+        return [x.rotated(by: angle), y.rotated(by: angle)]
     }
 
     func intersects(_ rect2: RotatedRect) -> Bool {
-        let (v0, v1, v2, v3) = (v0, v1, v2, v3)
+        return IntersectionDetector(r1: self, r2: rect2).intersects()
+    }
+}
 
-        let vertices = [v0, v1, v2, v3]
-        let endpoints = [
-            CGVector(v1-v0),
-            CGVector(v2-v1),
-            CGVector(v3-v2),
-            CGVector(v0-v3)
-        ]
+struct IntersectionDetector {
+    var r1: RotatedRect
+    var r2: RotatedRect
 
-        print(vertices, endpoints)
+    func intersects() -> Bool{
+        let axes = r1.axes + r2.axes
 
-        return false
+        for axis in axes {
+            let p1 = project(r1, onto: axis)
+            let p2 = project(r2, onto: axis)
+
+            if !p1.overlaps(p2) {
+                return false
+            }
+        }
+
+        return true
     }
 
-    private func rotate(point p: CGPoint) -> CGPoint {
-        let c = center
+    func project(_ rect: RotatedRect, onto axis: CGVector) -> ClosedRange<Double> {
+        var lowerBound: Double = .infinity
+        var upperBound: Double = -.infinity
 
-        let v = CGVector(dx: p.x-c.x, dy: p.y-c.y)
-        let distance = v.magnitude
-        let startAngle = v.angle
+        for v in rect.verticies {
+            let projection = v.dotProduct(axis)
+            lowerBound = min(projection, lowerBound)
+            upperBound = max(projection, upperBound)
+        }
 
-        let x = c.x + distance*cos(startAngle + angle)
-        let y = c.y + distance*sin(startAngle + angle)
-
-        return CGPoint(x: x, y: y)
+        return lowerBound...upperBound
     }
 }
 
