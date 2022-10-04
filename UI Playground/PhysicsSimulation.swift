@@ -81,12 +81,8 @@ fileprivate class World: ObservableObject {
 
     // Bounds of the viewport in meters -- won't be valid if the user's transform is not aligned with the X or Y axes
     var bounds: CGRect {
-        let inverseTransform = managedTransform.inverted()
-
-        let sizeInMeters = inverseTransform.transform(size)
-
-        let originInPoints = CGPoint(x: origin.x*size.width, y: origin.y*size.height)
-        let originInMeters = inverseTransform.transform(originInPoints)
+        let sizeInMeters = convertToWorld(size)
+        let originInMeters = CGPoint(x: 0 - origin.x*sizeInMeters.width, y: 0 - origin.y*sizeInMeters.height)
 
         return CGRect(origin: originInMeters, size: sizeInMeters)
     }
@@ -123,21 +119,21 @@ fileprivate class World: ObservableObject {
             bodies[i].position.y += bodies[i].velocity.dy*dt
         }
 
-        // TODO: Make this work. It currently doesn't.
-//        let b = bounds
-//        bodies.removeAll { !$0.boundingBox.intersects(b) }
-//        print(bodies.count)
+        let b = bounds
+        bodies.removeAll { !$0.boundingBox.intersects(b) }
     }
 
     func convertToWorld(_ p: CGPoint) -> CGPoint {
-//        print(transform, managedTransform)
-        return managedTransform.inverted().transform(p)
+        managedTransform.inverted().transform(p)
     }
 
     func convertToView(_ p: CGPoint) -> CGPoint {
         managedTransform.transform(p)
     }
 
+    // abs in these is kind of a hack, but it does seem that the correct behavior
+    // for applying a flipped transform to a size is negating the appropriate size
+    // component, and it's also non-sensical to have negative sizes.
     func convertToWorld(_ size: CGSize) -> CGSize {
         abs(managedTransform.inverted().transform(size))
     }
