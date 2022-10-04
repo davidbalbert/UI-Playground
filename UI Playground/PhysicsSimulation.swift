@@ -146,8 +146,6 @@ fileprivate class World: ObservableObject {
 extension World {
     @ViewBuilder func view(body: PhysicsBody) -> some View {
         let position = convertToView(body.position)
-
-        // The problem: In a flipped coordinate space, size.height is ending up negative. What's the right way to transform a size by an affine transform? Absolute value? I think?
         let size = convertToView(body.size)
 
         Color.white
