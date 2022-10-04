@@ -7,6 +7,10 @@
 
 import Foundation
 
+func abs(_ size: CGSize) -> CGSize {
+    CGSize(width: abs(size.width), height: abs(size.height))
+}
+
 extension CGPoint {
     static func *(_ a: CGFloat, _ b: CGPoint) -> CGPoint {
         CGPoint(x: a*b.x, y: a*b.y)
@@ -58,5 +62,15 @@ extension CGVector {
 
     func dotProduct(_ other: CGVector) -> Double {
         dx*other.dx + dy*other.dy
+    }
+}
+
+extension CGAffineTransform {
+    func transform(_ point: CGPoint) -> CGPoint {
+        CGPoint(x: a*point.x + c*point.y + tx, y: b*point.x + d*point.y + ty)
+    }
+
+    func transform(_ size: CGSize) -> CGSize {
+        CGSize(width: a*size.width + c*size.height, height: b*size.width + d*size.height)
     }
 }
