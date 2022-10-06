@@ -13,8 +13,8 @@ struct PhysicsBody: Identifiable {
     var position: CGPoint
     var velocity: CGVector
 
-//    var rotation: Angle
-//    var angularVelocity: Double
+    var rotation: Angle
+    var angularVelocity: Double
 
     var size: CGSize
 
@@ -22,8 +22,32 @@ struct PhysicsBody: Identifiable {
         CGRect(origin: CGPoint(x: position.x - size.width/2, y: position.y - size.height/2), size: size)
     }
 
+    var verticies: [CGVector] {
+        let p = CGVector(position)
+
+        return [
+            CGVector(dx: p.dx-size.width/2, dy: p.dy-size.height/2).rotated(by: rotation, around: p),
+            CGVector(dx: p.dx+size.width/2, dy: p.dy-size.height/2).rotated(by: rotation, around: p),
+            CGVector(dx: p.dx+size.width/2, dy: p.dy+size.height/2).rotated(by: rotation, around: p),
+            CGVector(dx: p.dx-size.width/2, dy: p.dy+size.height/2).rotated(by: rotation, around: p)
+        ]
+    }
+
     var boundingBox: CGRect {
-        frame
+        let vs = verticies
+
+        let xs = vs.map(\.dx)
+        let ys = vs.map(\.dy)
+
+        let minX = xs.min()!
+        let maxX = xs.max()!
+        let minY = ys.min()!
+        let maxY = ys.max()!
+
+        let origin = CGPoint(x: minX, y: minY)
+        let size = CGSize(width: maxX - minX, height: maxY - minY)
+
+        return CGRect(origin: origin, size: size)
     }
 }
 
@@ -117,6 +141,8 @@ fileprivate class World: ObservableObject {
 
             bodies[i].position.x += bodies[i].velocity.dx*dt
             bodies[i].position.y += bodies[i].velocity.dy*dt
+
+            bodies[i].rotation += .radians(bodies[i].angularVelocity*dt)
         }
 
         let b = bounds
@@ -149,8 +175,9 @@ extension World {
         let size = convertToView(body.size)
 
         Color.white
-            .position(position)
             .frame(width: size.width, height: size.height)
+            .rotationEffect(body.rotation)
+            .position(position)
     }
 }
 
@@ -171,7 +198,7 @@ struct PhysicsSimulation: View {
         .gesture(
             DragGesture(minimumDistance: 0)
                 .onEnded { value in
-                    world.add(PhysicsBody(position: world.convertToWorld(value.location), velocity: .zero, size: CGSize(width: 0.2, height: 0.2)))
+                    world.add(PhysicsBody(position: world.convertToWorld(value.location), velocity: .zero, rotation: .zero, angularVelocity: 1, size: CGSize(width: 0.2, height: 0.2)))
                 }
         )
         .eraseToAnyView()
