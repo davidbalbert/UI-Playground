@@ -11,17 +11,20 @@ protocol Collidable {
     var vertices: [CGVector] { get }
 }
 
+// Normal vector always points away from B and towards A
 func collide(_ a: Collidable, _ b: Collidable) -> (CGVector, Double) {
     let (n1, sep1) = collide(a: a, withB: b)
     let (n2, sep2) = collide(a: b, withB: a)
 
-    if sep1 < sep2 {
+    if sep1 >= sep2 {
         return (n1, sep1)
     } else {
-        return (n2, sep2)
+        return (-n2, sep2)
     }
 }
 
+// Collide using the vertices of a and the edges of B. The normal
+// always points out from B.
 func collide(a: Collidable, withB b: Collidable) -> (CGVector, Double) {
     var separation: Double = -.infinity
     var collisionNormal: CGVector = .zero
