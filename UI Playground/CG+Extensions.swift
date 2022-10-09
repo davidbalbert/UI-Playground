@@ -28,6 +28,10 @@ extension CGPoint {
         CGPoint(x: a.x-b.x, y: a.y-b.y)
     }
 
+    init(_ vector: CGVector) {
+        self.init(x: vector.dx, y: vector.dy)
+    }
+
     var rounded: CGPoint {
         CGPoint(x: x.rounded(), y: y.rounded())
     }
@@ -52,8 +56,25 @@ extension CGVector {
         CGVector(dx: a.dx-b.dx, dy: a.dy-b.dy)
     }
 
+    static func *(_ a: Double, _ b: CGVector) -> CGVector {
+        CGVector(dx: a*b.dx, dy: a*b.dy)
+    }
+
+    static func *(_ a: CGVector, _ b: Double) -> CGVector {
+        CGVector(dx: a.dx*b, dy: a.dy*b)
+    }
+
     static func /(_ a: CGVector, _ b: Double) -> CGVector {
         CGVector(dx: a.dx/b, dy: a.dy/b)
+    }
+
+    prefix static func -(_ v: CGVector) -> CGVector {
+        CGVector(dx: -v.dx, dy: -v.dy)
+    }
+
+    static func +=(_ a: inout CGVector, _ b: CGVector) {
+        a.dx += b.dx
+        a.dy += b.dy
     }
 
     init(_ point: CGPoint) {
@@ -76,6 +97,10 @@ extension CGVector {
 extension CGAffineTransform {
     func transform(_ point: CGPoint) -> CGPoint {
         CGPoint(x: a*point.x + c*point.y + tx, y: b*point.x + d*point.y + ty)
+    }
+
+    func transform(_ vector: CGVector) -> CGVector {
+        CGVector(dx: a*vector.dx + c*vector.dy + tx, dy: b*vector.dx + d*vector.dy + ty)
     }
 
     func transform(_ size: CGSize) -> CGSize {

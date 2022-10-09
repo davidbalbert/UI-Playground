@@ -10,7 +10,11 @@ import SwiftUI
 struct PhysicsBody: Identifiable {
     var id = UUID()
 
-    var position: CGPoint
+    var fixed: Bool = false
+
+    var mass: Double // kg
+
+    var position: CGVector
     var velocity: CGVector
 
     var rotation: Angle
@@ -19,11 +23,11 @@ struct PhysicsBody: Identifiable {
     var size: CGSize
 
     var frame: CGRect {
-        CGRect(origin: CGPoint(x: position.x - size.width/2, y: position.y - size.height/2), size: size)
+        CGRect(origin: CGPoint(x: position.dx - size.width/2, y: position.dy - size.height/2), size: size)
     }
 
-    var verticies: [CGVector] {
-        let p = CGVector(position)
+    var vertices: [CGVector] {
+        let p = position
 
         return [
             CGVector(dx: p.dx-size.width/2, dy: p.dy-size.height/2).rotated(by: rotation, around: p),
@@ -34,7 +38,7 @@ struct PhysicsBody: Identifiable {
     }
 
     var boundingBox: CGRect {
-        let vs = verticies
+        let vs = vertices
 
         let xs = vs.map(\.dx)
         let ys = vs.map(\.dy)
@@ -131,30 +135,60 @@ fileprivate class World: ObservableObject {
 
     func update(time: Date, size: CGSize) {
         let dt = min(lastTime.distance(to: time), 1.0/60.0)
-        lastTime = time
         self.size = size
 
-        let g = -9.81 // m/s^2
+        let g = CGVector(dx: 0, dy: -9.81) // m/2^2
 
-        for i in bodies.indices {
-            bodies[i].velocity.dy += g*dt
 
-            bodies[i].position.x += bodies[i].velocity.dx*dt
-            bodies[i].position.y += bodies[i].velocity.dy*dt
+        while lastTime < time {
+            let oldBodies = bodies
 
-            bodies[i].rotation += .radians(bodies[i].angularVelocity*dt)
+            for i in bodies.indices {
+                if bodies[i].fixed {
+                    continue
+                }
+
+                let force = bodies[i].mass * g
+                let torque: Double = 0
+
+                let a = force/bodies[i].mass
+
+                bodies[i].velocity += a*dt
+                bodies[i].position += bodies[i].velocity*dt
+
+                let alpha = torque/bodies[i].mass
+                bodies[i].angularVelocity += alpha*dt
+                bodies[i].rotation += .radians(bodies[i].angularVelocity*dt)
+            }
+
+
+            //        var forces: [CGVector] = []
+            //        var torques: [CGVector] = []
+
+//            for i in bodies.indices {
+//                if bodies[i].fixed {
+//                    forces.append(.zero)
+//                    torques.append(.zero)
+//                } else {
+//                    forces.append(CGVector(dx: 0, dy: bodies[i].mass*g))
+//                    torques.append(.zero)
+//                }
+//            }
+
+            lastTime = time
         }
 
         let b = bounds
         bodies.removeAll { !$0.boundingBox.intersects(b) }
+
     }
 
-    func convertToWorld(_ p: CGPoint) -> CGPoint {
-        managedTransform.inverted().transform(p)
+    func convertToWorld(_ p: CGPoint) -> CGVector {
+        CGVector(managedTransform.inverted().transform(p))
     }
 
-    func convertToView(_ p: CGPoint) -> CGPoint {
-        managedTransform.transform(p)
+    func convertToView(_ v: CGVector) -> CGPoint {
+        CGPoint(managedTransform.transform(v))
     }
 
     // abs in these is kind of a hack, but it does seem that the correct behavior
@@ -174,7 +208,8 @@ extension World {
         let position = convertToView(body.position)
         let size = convertToView(body.size)
 
-        Color.white
+        Rectangle()
+            .fill(body.fixed ? .red : .white)
             .frame(width: size.width, height: size.height)
             .rotationEffect(body.rotation)
             .position(position)
@@ -183,6 +218,21 @@ extension World {
 
 struct PhysicsSimulation: View {
     @StateObject fileprivate var world = World(origin: CGPoint(x: 0.5, y: 0.0), transform: CGAffineTransform(scaleX: 1, y: -1))
+
+    var gesture: some Gesture {
+        let dragWithOption = DragGesture(minimumDistance: 0)
+            .modifiers(.option)
+            .onEnded { value in
+                world.add(PhysicsBody(fixed: true, mass: .infinity, position: world.convertToWorld(value.location), velocity: .zero, rotation: .zero, angularVelocity: 0, size: CGSize(width: 0.2, height: 0.2)))
+            }
+
+        let drag = DragGesture(minimumDistance: 0)
+            .onEnded { value in
+                world.add(PhysicsBody(mass: 5, position: world.convertToWorld(value.location), velocity: .zero, rotation: .zero, angularVelocity: 1, size: CGSize(width: 0.2, height: 0.2)))
+            }
+
+        return dragWithOption.exclusively(before: drag)
+    }
 
     var body: some View {
         TimelineView(.animation) { context in
@@ -195,12 +245,7 @@ struct PhysicsSimulation: View {
             }
         }
         .background(.black)
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onEnded { value in
-                    world.add(PhysicsBody(position: world.convertToWorld(value.location), velocity: .zero, rotation: .zero, angularVelocity: 1, size: CGSize(width: 0.2, height: 0.2)))
-                }
-        )
+        .gesture(gesture)
         .eraseToAnyView()
     }
 
