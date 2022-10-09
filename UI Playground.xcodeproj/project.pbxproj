@@ -24,7 +24,7 @@
 		637EB6AE28E7BD0A0044BF18 /* PhysicsSimulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637EB6AD28E7BD0A0044BF18 /* PhysicsSimulation.swift */; };
 		637EB6B028E8DFC40044BF18 /* CollisionDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637EB6AF28E8DFC40044BF18 /* CollisionDetection.swift */; };
 		637EB6B228E8F7750044BF18 /* Angle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637EB6B128E8F7750044BF18 /* Angle+Extensions.swift */; };
-		6389179A28F3196400FE4B98 /* CollisionNormal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6389179928F3196400FE4B98 /* CollisionNormal.swift */; };
+		6389179A28F3196400FE4B98 /* Collide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6389179928F3196400FE4B98 /* Collide.swift */; };
 		63C7F2A228AAE1CD00D7BE64 /* UIPlaygroundApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2A128AAE1CD00D7BE64 /* UIPlaygroundApp.swift */; };
 		63C7F2A428AAE1CD00D7BE64 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C7F2A328AAE1CD00D7BE64 /* RootView.swift */; };
 		63C7F2A628AAE1CE00D7BE64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63C7F2A528AAE1CE00D7BE64 /* Assets.xcassets */; };
@@ -95,7 +95,7 @@
 		637EB6AD28E7BD0A0044BF18 /* PhysicsSimulation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicsSimulation.swift; sourceTree = "<group>"; };
 		637EB6AF28E8DFC40044BF18 /* CollisionDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionDetection.swift; sourceTree = "<group>"; };
 		637EB6B128E8F7750044BF18 /* Angle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Angle+Extensions.swift"; sourceTree = "<group>"; };
-		6389179928F3196400FE4B98 /* CollisionNormal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionNormal.swift; sourceTree = "<group>"; };
+		6389179928F3196400FE4B98 /* Collide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collide.swift; sourceTree = "<group>"; };
 		63C7F29E28AAE1CD00D7BE64 /* UI Playground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UI Playground.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63C7F2A128AAE1CD00D7BE64 /* UIPlaygroundApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIPlaygroundApp.swift; sourceTree = "<group>"; };
 		63C7F2A328AAE1CD00D7BE64 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -197,7 +197,7 @@
 				63EF798928B1520700E0EF1F /* ClippingAndMasking.swift */,
 				63FC0C0628B50D46004A9874 /* Clocks.swift */,
 				637EB6AF28E8DFC40044BF18 /* CollisionDetection.swift */,
-				6389179928F3196400FE4B98 /* CollisionNormal.swift */,
+				6389179928F3196400FE4B98 /* Collide.swift */,
 				63C92F8828B6AEB500DF9617 /* Comparable+Extensions.swift */,
 				63C92F8628B6A7FB00DF9617 /* CoverFlow.swift */,
 				6360A25028BA9A3C00FC2587 /* CustomKnobSliders.swift */,
@@ -426,7 +426,7 @@
 				6360A24F28B9472B00FC2587 /* BezierCurve.swift in Sources */,
 				63EF793E28B0F84100E0EF1F /* PhotoGrid.swift in Sources */,
 				63C7F2DD28AAFC1800D7BE64 /* Debug.swift in Sources */,
-				6389179A28F3196400FE4B98 /* CollisionNormal.swift in Sources */,
+				6389179A28F3196400FE4B98 /* Collide.swift in Sources */,
 				63C7F2D328AAEEB200D7BE64 /* MeasureBehavior.swift in Sources */,
 				63EF799228B2CC5500E0EF1F /* GridViews.swift in Sources */,
 				63EF798228B1389C00E0EF1F /* Texts.swift in Sources */,
