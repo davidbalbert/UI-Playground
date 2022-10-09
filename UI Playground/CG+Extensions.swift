@@ -52,12 +52,20 @@ extension CGVector {
         CGVector(dx: a.dx-b.dx, dy: a.dy-b.dy)
     }
 
+    static func /(_ a: CGVector, _ b: Double) -> CGVector {
+        CGVector(dx: a.dx/b, dy: a.dy/b)
+    }
+
     init(_ point: CGPoint) {
         self.init(dx: point.x, dy: point.y)
     }
 
     var magnitude: Double {
         sqrt(pow(dx, 2) + pow(dy, 2))
+    }
+
+    var normalized: CGVector {
+        self/magnitude
     }
 
     func dotProduct(_ other: CGVector) -> Double {

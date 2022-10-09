@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RotatedRect: Identifiable {
+struct RotatedRect: Identifiable, Collidable {
     var id = UUID()
 
     var center: CGPoint
@@ -22,7 +22,7 @@ struct RotatedRect: Identifiable {
         size.height
     }
 
-    var verticies: [CGVector] {
+    var vertices: [CGVector] {
         let c = CGVector(center)
 
         return [
@@ -33,48 +33,8 @@ struct RotatedRect: Identifiable {
         ]
     }
 
-    var axes: [CGVector] {
-        let x = CGVector(dx: 1, dy: 0)
-        let y = CGVector(dx: 0, dy: 1)
-
-        return [x.rotated(by: angle), y.rotated(by: angle)]
-    }
-
     func intersects(_ rect2: RotatedRect) -> Bool {
-        return IntersectionDetector(r1: self, r2: rect2).intersects()
-    }
-}
-
-struct IntersectionDetector {
-    var r1: RotatedRect
-    var r2: RotatedRect
-
-    func intersects() -> Bool{
-        let axes = r1.axes + r2.axes
-
-        for axis in axes {
-            let p1 = project(r1, onto: axis)
-            let p2 = project(r2, onto: axis)
-
-            if !p1.overlaps(p2) {
-                return false
-            }
-        }
-
-        return true
-    }
-
-    func project(_ rect: RotatedRect, onto axis: CGVector) -> ClosedRange<Double> {
-        var lowerBound: Double = .infinity
-        var upperBound: Double = -.infinity
-
-        for v in rect.verticies {
-            let projection = v.dotProduct(axis)
-            lowerBound = min(projection, lowerBound)
-            upperBound = max(projection, upperBound)
-        }
-
-        return lowerBound...upperBound
+        collisionNormal(from: self, to: rect2).magnitude <= 0 && collisionNormal(from: rect2, to: self).magnitude <= 0
     }
 }
 
