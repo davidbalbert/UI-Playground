@@ -11,10 +11,9 @@ protocol Collidable {
     var vertices: [CGVector] { get }
 }
 
-
 func collide(_ a: Collidable, _ b: Collidable) -> (CGVector, Double) {
-    let (n1, sep1) = collide(from: a, to: b)
-    let (n2, sep2) = collide(from: b, to: a)
+    let (n1, sep1) = collide(a: a, withB: b)
+    let (n2, sep2) = collide(a: b, withB: a)
 
     if sep1 < sep2 {
         return (n1, sep1)
@@ -23,20 +22,20 @@ func collide(_ a: Collidable, _ b: Collidable) -> (CGVector, Double) {
     }
 }
 
-func collide(from a: Collidable, to b: Collidable) -> (CGVector, Double) {
+func collide(a: Collidable, withB b: Collidable) -> (CGVector, Double) {
     var separation: Double = -.infinity
     var collisionNormal: CGVector = .zero
 
-    let vertices = a.vertices
+    let vertices = b.vertices
 
-    for (i, va) in vertices.enumerated() {
+    for (i, vb) in vertices.enumerated() {
         let vNext = vertices[(i+1) % vertices.count]
-        let edge = va - vNext
+        let edge = vb - vNext
         let normal = edge.rotated(by: .degrees(90)).normalized
 
         var minSep: Double = .infinity
-        for vb in b.vertices {
-            minSep = min(minSep, (vb-va).dotProduct(normal))
+        for va in a.vertices {
+            minSep = min(minSep, (va-vb).dotProduct(normal))
         }
 
         if (minSep > separation) {
