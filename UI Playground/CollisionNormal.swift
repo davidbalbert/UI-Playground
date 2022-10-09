@@ -11,25 +11,21 @@ protocol Collidable {
     var vertices: [CGVector] { get }
 }
 
-struct CollisionNormal {
-    var v: CGVector
-    var magnitude: Double
-}
 
-func collisionNormal(_ a: Collidable, _ b: Collidable) -> CollisionNormal {
-    let n1 = collisionNormal(from: a, to: b)
-    let n2 = collisionNormal(from: b, to: a)
+func collide(_ a: Collidable, _ b: Collidable) -> (CGVector, Double) {
+    let (n1, sep1) = collide(from: a, to: b)
+    let (n2, sep2) = collide(from: b, to: a)
 
-    if n1.magnitude < n2.magnitude {
-        return n1
+    if sep1 < sep2 {
+        return (n1, sep1)
     } else {
-        return n2
+        return (n2, sep2)
     }
 }
 
-func collisionNormal(from a: Collidable, to b: Collidable) -> CollisionNormal {
+func collide(from a: Collidable, to b: Collidable) -> (CGVector, Double) {
     var separation: Double = -.infinity
-    var v: CGVector = .zero
+    var collisionNormal: CGVector = .zero
 
     let vertices = a.vertices
 
@@ -43,12 +39,11 @@ func collisionNormal(from a: Collidable, to b: Collidable) -> CollisionNormal {
             minSep = min(minSep, (vb-va).dotProduct(normal))
         }
 
-        // TODO: Why are we getting the max of all these?
         if (minSep > separation) {
-            v = normal
+            collisionNormal = normal
             separation = minSep
         }
     }
 
-    return CollisionNormal(v: v, magnitude: separation)
+    return (collisionNormal, separation)
 }
