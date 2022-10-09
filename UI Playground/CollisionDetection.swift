@@ -34,7 +34,7 @@ struct RotatedRect: Identifiable, Collidable {
     }
 
     func intersects(_ rect2: RotatedRect) -> Bool {
-        let (_, separation) = collide(self, rect2)
+        let (_, _, separation) = collide(self, rect2)
 
         return separation <= 0
     }

@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct PhysicsBody: Identifiable {
+struct PhysicsBody: Identifiable, Collidable {
     var id = UUID()
 
     var fixed: Bool = false
 
-    var mass: Double // kg
+    let mass: Double // kg
 
     var position: CGVector
     var velocity: CGVector
@@ -22,9 +22,7 @@ struct PhysicsBody: Identifiable {
 
     var size: CGSize
 
-    var frame: CGRect {
-        CGRect(origin: CGPoint(x: position.dx - size.width/2, y: position.dy - size.height/2), size: size)
-    }
+    lazy var inverseMomentOfInertia: Double = (1/12) * size.width * size.height * (pow(size.width, 2) + pow(size.height, 2))
 
     var vertices: [CGVector] {
         let p = position
@@ -52,6 +50,20 @@ struct PhysicsBody: Identifiable {
         let size = CGSize(width: maxX - minX, height: maxY - minY)
 
         return CGRect(origin: origin, size: size)
+    }
+}
+
+struct Collisions {
+    var dictionary: [String: (CGVector, CGVector, Double)] = [:]
+
+    subscript(b1: PhysicsBody, b2: PhysicsBody) -> (CGVector, CGVector, Double) {
+        get {
+            dictionary[b1.id.uuidString + b2.id.uuidString]!
+        }
+
+        set {
+            dictionary[b1.id.uuidString + b2.id.uuidString] = newValue
+        }
     }
 }
 
@@ -134,13 +146,14 @@ fileprivate class World: ObservableObject {
     }
 
     func update(time: Date, size: CGSize) {
-        let dt = min(lastTime.distance(to: time), 1.0/60.0)
+        var dt = min(lastTime.distance(to: time), 1.0/60.0)
         self.size = size
 
         let g = CGVector(dx: 0, dy: -9.81) // m/2^2
 
 
         while lastTime < time {
+            print(dt)
             let oldBodies = bodies
 
             for i in bodies.indices {
@@ -152,7 +165,6 @@ fileprivate class World: ObservableObject {
                 let torque: Double = 0
 
                 let a = force/bodies[i].mass
-
                 bodies[i].velocity += a*dt
                 bodies[i].position += bodies[i].velocity*dt
 
@@ -161,21 +173,77 @@ fileprivate class World: ObservableObject {
                 bodies[i].rotation += .radians(bodies[i].angularVelocity*dt)
             }
 
+            var collisions = Collisions()
 
-            //        var forces: [CGVector] = []
-            //        var torques: [CGVector] = []
+            for i in bodies.indices {
+                for j in (i+1)..<bodies.count {
+                    collisions[bodies[i], bodies[j]] = collide(bodies[i], bodies[j])
+                }
+            }
 
-//            for i in bodies.indices {
-//                if bodies[i].fixed {
-//                    forces.append(.zero)
-//                    torques.append(.zero)
-//                } else {
-//                    forces.append(CGVector(dx: 0, dy: bodies[i].mass*g))
-//                    torques.append(.zero)
-//                }
-//            }
+            var anyBodiesPenetrating = false
 
-            lastTime = time
+            for i in bodies.indices {
+                for j in (i+1)..<bodies.count {
+                    let (_, _, sep) = collisions[bodies[i], bodies[j]]
+
+                    if sep < 0 && !sep.isApproximatelyZero {
+                        anyBodiesPenetrating = true
+                        break
+                    }
+                }
+
+                if anyBodiesPenetrating {
+                    break
+                }
+            }
+
+            if anyBodiesPenetrating {
+                dt /= 2
+                bodies = oldBodies
+            } else {
+                for i in bodies.indices {
+                    for j in (i+1)..<bodies.count {
+                        let (collisionVertex, normal, sep) = collisions[bodies[i], bodies[j]]
+
+                        if sep.isApproximatelyZero {
+                            let vAB = bodies[i].velocity - bodies[j].velocity
+                            let e = 0.2 // coefficient of restitution
+                            let numerator = -(1+e)*vAB.dotProduct(normal)
+
+                            let rAP = collisionVertex - bodies[i].position
+                            let rBP = collisionVertex - bodies[j].position
+
+                            let perpAP = rAP.rotated(by: .degrees(90))
+                            let perpBP = rBP.rotated(by: .degrees(90))
+
+                            let massTerm = normal.dotProduct(normal) * (1/bodies[i].mass + 1/bodies[j].mass)
+                            let rotationATerm = bodies[i].inverseMomentOfInertia*pow(perpAP.dotProduct(normal), 2)
+                            let rotationBTerm = bodies[j].inverseMomentOfInertia*pow(perpBP.dotProduct(normal), 2)
+
+                            let denominator = massTerm + rotationATerm + rotationBTerm
+
+                            let impulse = (numerator/denominator) * normal
+
+                            bodies[i].velocity = bodies[i].velocity + impulse/bodies[i].mass
+                            bodies[j].velocity = bodies[j].velocity - impulse/bodies[j].mass
+
+                            bodies[i].angularVelocity = bodies[i].angularVelocity + perpAP.dotProduct(impulse)*bodies[i].inverseMomentOfInertia
+                            bodies[j].angularVelocity = bodies[j].angularVelocity - perpBP.dotProduct(impulse)*bodies[j].inverseMomentOfInertia
+                        }
+                    }
+                }
+
+                for i in bodies.indices {
+                    bodies[i].position = oldBodies[i].position + bodies[i].velocity*dt
+                    bodies[i].rotation = oldBodies[i].rotation + .radians(bodies[i].angularVelocity*dt)
+                }
+
+                
+
+                lastTime += dt
+                dt = lastTime.distance(to: time)
+            }
         }
 
         let b = bounds
@@ -228,7 +296,7 @@ struct PhysicsSimulation: View {
 
         let drag = DragGesture(minimumDistance: 0)
             .onEnded { value in
-                world.add(PhysicsBody(mass: 5, position: world.convertToWorld(value.location), velocity: .zero, rotation: .zero, angularVelocity: 1, size: CGSize(width: 0.2, height: 0.2)))
+                world.add(PhysicsBody(mass: 5, position: world.convertToWorld(value.location), velocity: .zero, rotation: .zero, angularVelocity: 0, size: CGSize(width: 0.2, height: 0.2)))
             }
 
         return dragWithOption.exclusively(before: drag)
